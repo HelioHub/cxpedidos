@@ -65,10 +65,12 @@ type
     property SitCadastralClientes: string read GetSitCadastralClientes write SetSitCadastralClientes;
     property NumRuaClientes: Integer read GetNumRuaClientes write SetNumRuaClientes;
 
-    procedure CarregarDados(const AFDMemTable: TFDMemTable; pId, pNomeCliente: String); // Método para carregar dados
+    procedure CarregarDados(const AFDMemTable: TFDMemTable; pId, pNomeCliente, pLimite: String); // Método para carregar dados
     function CarregarNomePorId(pId: String) : String; // Implementação do método Carregar Nome por Id
     function Salvar: Boolean; // Método para salvar o pedido
     function Excluir(const AId: Integer): Boolean; // Método para excluir um pedido
+
+    function GerarRelatorioHTML(const CodigosClientes: String): string;
   end;
 
 implementation

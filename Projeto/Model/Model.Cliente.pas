@@ -86,10 +86,12 @@ type
     property NomeFantasiaClientes: string read GetNomeFantasiaClientes write SetNomeFantasiaClientes;
     property SitCadastralClientes: string read GetSitCadastralClientes write SetSitCadastralClientes;
 
-    procedure CarregarDados(const AFDMemTable: TFDMemTable; pId, pNomeCliente: String); // Implementação do método CarregarDados
+    procedure CarregarDados(const AFDMemTable: TFDMemTable; pId, pNomeCliente, pLimite: String);
     function CarregarNomePorId(pId: String) : String; // Implementação do método Carregar Nome por Id
     function Excluir(const AId: Integer): Boolean;
     function Salvar: Boolean;
+
+    function GerarRelatorioHTML(const CodigosClientes: String): string;
   end;
 
 implementation
@@ -98,8 +100,8 @@ uses
   FireDAC.DApt, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
   FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
   FireDAC.Phys, FireDAC.VCLUI.Wait, FireDAC.Comp.UI, FireDAC.Phys.MySQL,
-  FireDAC.Phys.MySQLDef, System.SysUtils, Vcl.Dialogs, CXConst,
-  Utils.ErrorLogger;
+  FireDAC.Phys.MySQLDef, System.SysUtils, System.Classes, Vcl.Dialogs, Utils.ErrorLogger,
+  CXConst;
 
 { TCliente }
 
@@ -166,6 +168,87 @@ end;
 procedure TCliente.SetRuaClientes(const Value: string);
 begin
   FRuaClientes := Value;
+end;
+
+function TCliente.GerarRelatorioHTML(
+  const CodigosClientes: String): string;
+var
+  HTML: TStringList;
+begin
+  FQuery.SQL.Clear;
+  FQuery.SQL.Text := 'SELECT * FROM Clientes WHERE CodigoClientes '; //IN (:Codigos)';
+  //FQuery.ParamByName('Codigos').AsString := CodigosClientes; // Passa a lista de códigos
+  FQuery.SQL.Add(' ORDER BY CodigoClientes');
+  FQuery.Open;
+
+  // Cria o HTML
+  HTML := TStringList.Create;
+  try
+    // Início do HTML
+    HTML.Add('<!DOCTYPE html>');
+    HTML.Add('<html lang="pt-BR">');
+    HTML.Add('<head>');
+    HTML.Add('  <meta charset="UTF-8">');
+    HTML.Add('  <meta name="viewport" content="width=device-width, initial-scale=1.0">');
+    HTML.Add('  <title>Relatorio de Clientes</title>');
+    HTML.Add('  <style>');
+    HTML.Add('    body { font-family: Arial, sans-serif; margin: 20px; }');
+    HTML.Add('    h1 { color: #333; }');
+    HTML.Add('    table { width: 100%; border-collapse: collapse; margin-top: 20px; }');
+    HTML.Add('    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }');
+    HTML.Add('    th { background-color: #f2f2f2; }');
+    HTML.Add('    tr:nth-child(even) { background-color: #f9f9f9; }');
+    HTML.Add('    tr:hover { background-color: #f1f1f1; }');
+    HTML.Add('  </style>');
+    HTML.Add('</head>');
+    HTML.Add('<body>');
+    HTML.Add('  <h1>Relatorio de Clientes</h1>');
+    HTML.Add('  <table>');
+    HTML.Add('    <thead>');
+    HTML.Add('      <tr>');
+    HTML.Add('        <th>Codigo</th>');
+    HTML.Add('        <th>Nome</th>');
+    HTML.Add('        <th>CNPJ</th>');
+    HTML.Add('        <th>CEP</th>');
+    HTML.Add('        <th>Rua</th>');
+    HTML.Add('        <th>Numero</th>');
+    HTML.Add('        <th>Bairro</th>');
+    HTML.Add('        <th>Cidade</th>');
+    HTML.Add('        <th>UF</th>');
+    HTML.Add('        <th>Nome Fantasia</th>');
+    HTML.Add('        <th>Situacao Cadastral</th>');
+    HTML.Add('      </tr>');
+    HTML.Add('    </thead>');
+    HTML.Add('    <tbody>');
+
+    while not FQuery.Eof do
+    begin
+      HTML.Add('      <tr>');
+      HTML.Add('        <td>' + FQuery.FieldByName('CodigoClientes').AsString + '</td>');
+      HTML.Add('        <td>' + FQuery.FieldByName('NomeClientes').AsString + '</td>');
+      HTML.Add('        <td>' + FQuery.FieldByName('CNPJClientes').AsString + '</td>');
+      HTML.Add('        <td>' + FQuery.FieldByName('CEPClientes').AsString + '</td>');
+      HTML.Add('        <td>' + FQuery.FieldByName('RuaClientes').AsString + '</td>');
+      HTML.Add('        <td>' + FQuery.FieldByName('NumeroRuaClientes').AsString + '</td>');
+      HTML.Add('        <td>' + FQuery.FieldByName('BairroClientes').AsString + '</td>');
+      HTML.Add('        <td>' + FQuery.FieldByName('CidadeClientes').AsString + '</td>');
+      HTML.Add('        <td>' + FQuery.FieldByName('UFClientes').AsString + '</td>');
+      HTML.Add('        <td>' + FQuery.FieldByName('NomeFantasiaClientes').AsString + '</td>');
+      HTML.Add('        <td>' + FQuery.FieldByName('SitCadastralClientes').AsString + '</td>');
+      HTML.Add('      </tr>');
+      FQuery.Next;
+    end;
+
+    // Fecha o HTML
+    HTML.Add('    </tbody>');
+    HTML.Add('  </table>');
+    HTML.Add('</body>');
+    HTML.Add('</html>');
+
+    Result := HTML.Text;
+  finally
+    HTML.Free;
+  end;
 end;
 
 function TCliente.GetBairroClientes: string;
@@ -258,7 +341,7 @@ begin
   FSitCadastralClientes := Value;
 end;
 
-procedure TCliente.CarregarDados(const AFDMemTable: TFDMemTable; pId, pNomeCliente: String);
+procedure TCliente.CarregarDados(const AFDMemTable: TFDMemTable; pId, pNomeCliente, pLimite: String);
 begin
   try
     // Prepara a query para selecionar os dados
@@ -284,7 +367,8 @@ begin
     if pNomeCliente <> EmptyStr then
       FQuery.SQL.Add(' AND clientes.NomeClientes LIKE '+QuotedStr(pNomeCliente+'%'));
     FQuery.SQL.Add(' ORDER BY clientes.NomeClientes');
-    FQuery.SQL.Add(' LIMIT 100 OFFSET 0 ');
+    if pLimite <> EmptyStr then
+      FQuery.SQL.Add('	LIMIT '+pLimite+' OFFSET 0 ');
     FQuery.Open;
 
     // Copia os dados para o TFDMemTable

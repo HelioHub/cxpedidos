@@ -165,6 +165,7 @@ object FViewClientes: TFViewClientes
       ParentShowHint = False
       ShowHint = True
       TabOrder = 4
+      OnClick = BBRelatorioClick
     end
   end
   object PRodape: TPanel

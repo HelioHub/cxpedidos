@@ -64,6 +64,7 @@ type
     procedure PMAtualizarItensdoPedidoClick(Sender: TObject);
     procedure SBClearPedidoClick(Sender: TObject);
     procedure SBClearNomeClienteClick(Sender: TObject);
+    procedure BBRelatorioClick(Sender: TObject);
   private
     { Private declarations }
     FClienteController: TClienteController;
@@ -71,6 +72,7 @@ type
     procedure TratarDelete;
     procedure pCRUD(pAcao: TAcao);
     procedure pAtualizacao;
+    procedure GerarExibirRelatorio;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -104,9 +106,64 @@ begin
   pAtualizacao;
 end;
 
+procedure TFViewClientes.GerarExibirRelatorio;
+var
+  HTML: string;
+  FileName: string;
+  ClienteIDs: string;
+  I: Integer;
+begin
+  ClienteIDs := '';
+  If DBGView.SelectedRows.Count > 0 then
+  begin
+    for I := 0 to DBGView.SelectedRows.Count - 1 do
+    begin
+      // Move para o registro selecionado
+      DSViewClientes.DataSet.GotoBookmark(TBookmark(DBGView.SelectedRows.Items[I]));
+
+      // Adiciona o campo 'CodigoClientes' à lista
+      ClienteIDs := ClienteIDs + DSViewClientes.DataSet.FieldByName('CodigoClientes').AsString+',';
+    end;
+    // Retorna os valores separados por vírgula
+    ClienteIDs := Copy(ClienteIDs, 1, Length(ClienteIDs) - 1);
+    ShowMessage('IDs Selecionados: ' + ClienteIDs);
+  end
+  else
+  begin
+    DSViewClientes.DataSet.First;
+    while Not DSViewClientes.DataSet.Eof do
+    begin
+      ClienteIDs := ClienteIDs + DSViewClientes.DataSet.FieldByName('CodigoClientes').AsString+',';
+      DSViewClientes.DataSet.Next;
+    end;
+    ClienteIDs := Copy(ClienteIDs, 1, Length(ClienteIDs) - 1);
+    DSViewClientes.DataSet.First;
+  end;
+
+  HTML := FClienteController.GerarRelatorioHTML(ClienteIDs);
+
+  // Salva o HTML em um arquivo temporário
+  FileName := ExtractFilePath(Application.ExeName) + 'relatorio_pedido.html';
+  with TStringList.Create do
+  try
+    Text := HTML;
+    SaveToFile(FileName);
+  finally
+    Free;
+  end;
+
+  // Abre o arquivo no navegador padrão
+  ShellExecute(0, 'open', PChar(FileName), nil, nil, SW_SHOWNORMAL);
+end;
+
 procedure TFViewClientes.BBIncluirClick(Sender: TObject);
 begin
   pCRUD(acIncluir);
+end;
+
+procedure TFViewClientes.BBRelatorioClick(Sender: TObject);
+begin
+  GerarExibirRelatorio;
 end;
 
 procedure TFViewClientes.BBAlterarClick(Sender: TObject);
@@ -213,7 +270,8 @@ procedure TFViewClientes.pAtualizacao;
 begin
   FClienteController.CarregarDadosClientes(ClientesMemTable,
     LEFiltroCodigoCliente.Text,
-    LEFiltroNomeCliente.Text);
+    LEFiltroNomeCliente.Text,
+    ENR.Text);
 end;
 
 procedure TFViewClientes.SBClearNomeClienteClick(Sender: TObject);

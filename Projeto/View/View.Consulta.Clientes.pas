@@ -91,8 +91,8 @@ begin
   FClienteController.CarregarDadosClientes(
     FDMemTableCliente,
     '',
-    LEFiltroNomeCliente.Text
-    );
+    LEFiltroNomeCliente.Text,
+    '');
 end;
 
 end.

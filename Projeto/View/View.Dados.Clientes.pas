@@ -110,6 +110,7 @@ begin
   Cliente.CEPClientes := ECEP.Text;
   Cliente.RuaClientes := EEndereco.Text;
   Cliente.BairroClientes := EBairro.Text;
+  Cliente.CidadeClientes := ECidade.Text;
   Cliente.UFClientes := EUF.Text;
   Cliente.LongitudeClientes := StrToFloatDef(ELongitude.Text,0);
   Cliente.LatitudeClientes := StrToFloatDef(ELatidude.Text,0);

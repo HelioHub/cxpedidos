@@ -7,28 +7,37 @@ Cadastro de Pedidos e Clientes
 ![## Atenção CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/Atencao3.png)
 ![## Atenção CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/Atencao.png)
 
-## Requisitos 
+## Requisitos Atendidos
 
--Criar um projeto VCL com um CRUD de clientes
+1-Criar um projeto VCL com um CRUD de clientes 
+![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA1.png)
 
--Realizar a integração da seguinte API para consulta de CEP: https://brasilapi.com.br/docs#tag/CEP
+2-Realizar a integração da seguinte API para consulta de CEP: https://brasilapi.com.br/docs#tag/CEP
+![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA2.png)
 
--Realizar a integração da seguinte API para consulta de CNPJ: https://brasilapi.com.br/docs#tag/CNPJ
+3-Realizar a integração da seguinte API para consulta de CNPJ: https://brasilapi.com.br/docs#tag/CNPJ
+![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA2.png)
 
--Realizar a integração da seguinte API para trazer o código do IBGE e informar no cadastro do cliente: https://brasilapi.com.br/docs#tag/IBGE
+4-Realizar a integração da seguinte API para trazer o código do IBGE e informar no cadastro do cliente: https://brasilapi.com.br/docs#tag/IBGE
+![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA2.png)
 
--Salvar os dados e exibir em uma grid e também ter a opção de editar ou excluir o registro da grid
+5-Salvar os dados e exibir em uma grid e também ter a opção de editar ou excluir o registro da grid
+![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA5.png)
 
--Realizar a impressão de todos os registros
+6-Realizar a impressão de todos os registros
+![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA6.png)
 
--Realizar a impressão de registros selecionados
+7-Realizar a impressão de registros selecionados
+![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA6.png)
 
--Realizar a alteração na rotina de consulta CEP para trazer a latitude e longitude: https://brasilapi.com.br/docs#tag/CEP-V2 
+8-Realizar a alteração na rotina de consulta CEP para trazer a latitude e longitude: https://brasilapi.com.br/docs#tag/CEP-V2 
+![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA2.png)
 
--As informações podem ser salvar em um banco ou em memoria(Memtable) - (caso for usar banco de teste nos passe o banco para poder testar a aplicação)
+9-As informações podem ser salvar em um banco ou em memoria(Memtable) - (caso for usar banco de teste nos passe o banco para poder testar a aplicação)
+![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA9.png)
 
--Enviar o fonte por email ou o link do github com o projeto publico
-
+10-Enviar o fonte por email ou o link do github com o projeto publico
+	Enviado!! 
 
 ## Diagrama de Entidade e Relacionamento 
 
@@ -448,4 +457,21 @@ Cadastro de Pedidos e Clientes
 	Host info = localhost via TCP/IP
 	Name modes = CILCTD
 	SSL Cipher = 
+
+## O componente TIdHTTP usa a biblioteca OpenSSL
+
+   Para conexão da API Brasil estou usando a biblioteca Indy e para carregar as bibliotecas SSL 
+   necessárias para fazer requisições HTTPS é importante ter as as DLLs do OpenSSL no
+   PATH do sistema ou no diretório do executável
+
+   Estão no Projeto na pasta .\DDL
+	libeay32.dll
+	ssleay32.dll
+
+## DUMP do Banco de Dados MySQL
+
+   Estão no Projeto na pasta .\DUMP
+
+
+
 

@@ -1,0 +1,43 @@
+<html>
+<head>
+<title>Gráfico de Pizza - Produtos Mais Vendidos</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  .cabecalho { text-align: center; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+<div class="cabecalho">
+  <h1>Gráfico dos Itens mais Vendidos de Pizza</h1>
+  <p><strong>Hélio Marques</strong></p>
+</div>
+<div style="width: 75%; margin: auto;">
+  <canvas id="graficoPizza"></canvas>
+</div>
+<script>
+const ctx = document.getElementById("graficoPizza").getContext("2d");
+const graficoPizza = new Chart(ctx, {
+  type: "pie",
+  data: {
+    labels: ['Mouse',"'CPU i3'","'Gabinete X'"],
+    datasets: [{
+      label: "Total Vendido",
+      data: [10,1,1],
+      backgroundColor: ["rgba(26, 142, 38, 0.6)","rgba(105, 235, 93, 0.6)","rgba(159, 61, 195, 0.6)"],
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: "top" },
+      title: {
+        display: true,
+        text: "Produtos Mais Vendidos"
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>

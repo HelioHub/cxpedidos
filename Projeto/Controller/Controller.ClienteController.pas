@@ -17,7 +17,7 @@ type
     function SalvarCliente(ACliente: ICliente) : Boolean;
     function ExcluirCliente(const AId: Integer): Boolean;
     function CarregarNomePorId(pId: String) : String; // Implementação do método Carregar Nome por Id
-    function GerarRelatorioHTML(const CodigosClientes: String): string;
+    function GerarRelatorioHTML(const CodigosClientes: TArray<Integer>): string;
 
     procedure CarregarDadosClientes(const AFDMemTable: TFDMemTable; pId, pNomeCliente, pLimite: String);
   end;
@@ -45,7 +45,7 @@ begin
 end;
 
 function TClienteController.GerarRelatorioHTML(
-  const CodigosClientes: String): string;
+  const CodigosClientes: TArray<Integer>): string;
 begin
   result := FCliente.GerarRelatorioHTML(CodigosClientes);
 end;

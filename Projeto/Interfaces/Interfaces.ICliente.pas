@@ -70,7 +70,7 @@ type
     function Salvar: Boolean; // Método para salvar o pedido
     function Excluir(const AId: Integer): Boolean; // Método para excluir um pedido
 
-    function GerarRelatorioHTML(const CodigosClientes: String): string;
+    function GerarRelatorioHTML(const CodigosClientes: TArray<Integer>): string;
   end;
 
 implementation

@@ -10,7 +10,7 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.StorageBin,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.Menus,
-  Controller.ClienteController,
+  Controller.ClienteController,  System.Generics.Collections,
   CXConst, Winapi.ShellAPI, Vcl.ComCtrls, Vcl.DBCtrls;
 
 type
@@ -110,37 +110,37 @@ procedure TFViewClientes.GerarExibirRelatorio;
 var
   HTML: string;
   FileName: string;
-  ClienteIDs: string;
+  ListaCodigos: TList<Integer>;
+  CodigosClientes: TArray<Integer>;
   I: Integer;
 begin
-  ClienteIDs := '';
-  If DBGView.SelectedRows.Count > 0 then
-  begin
-    for I := 0 to DBGView.SelectedRows.Count - 1 do
+  ListaCodigos := TList<Integer>.Create;
+  try
+    If DBGView.SelectedRows.Count > 0 then
     begin
-      // Move para o registro selecionado
-      DSViewClientes.DataSet.GotoBookmark(TBookmark(DBGView.SelectedRows.Items[I]));
-
-      // Adiciona o campo 'CodigoClientes' à lista
-      ClienteIDs := ClienteIDs + DSViewClientes.DataSet.FieldByName('CodigoClientes').AsString+',';
-    end;
-    // Retorna os valores separados por vírgula
-    ClienteIDs := Copy(ClienteIDs, 1, Length(ClienteIDs) - 1);
-    ShowMessage('IDs Selecionados: ' + ClienteIDs);
-  end
-  else
-  begin
-    DSViewClientes.DataSet.First;
-    while Not DSViewClientes.DataSet.Eof do
+      for I := 0 to DBGView.SelectedRows.Count - 1 do
+      begin
+        DSViewClientes.DataSet.GotoBookmark(TBookmark(DBGView.SelectedRows.Items[I]));
+        ListaCodigos.Add(DSViewClientes.DataSet.FieldByName('CodigoClientes').AsInteger);
+      end;
+      CodigosClientes := ListaCodigos.ToArray;
+    end
+    else
     begin
-      ClienteIDs := ClienteIDs + DSViewClientes.DataSet.FieldByName('CodigoClientes').AsString+',';
-      DSViewClientes.DataSet.Next;
+      DSViewClientes.DataSet.First;
+      while Not DSViewClientes.DataSet.Eof do
+      begin
+        ListaCodigos.Add(DSViewClientes.DataSet.FieldByName('CodigoClientes').AsInteger);
+        DSViewClientes.DataSet.Next;
+      end;
+      CodigosClientes := ListaCodigos.ToArray;
+      DSViewClientes.DataSet.First;
     end;
-    ClienteIDs := Copy(ClienteIDs, 1, Length(ClienteIDs) - 1);
-    DSViewClientes.DataSet.First;
+  finally
+    ListaCodigos.Free; // Libera a memória da lista
   end;
 
-  HTML := FClienteController.GerarRelatorioHTML(ClienteIDs);
+  HTML := FClienteController.GerarRelatorioHTML(CodigosClientes);
 
   // Salva o HTML em um arquivo temporário
   FileName := ExtractFilePath(Application.ExeName) + 'relatorio_pedido.html';

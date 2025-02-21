@@ -21,6 +21,7 @@ type
     FCodIBGEClientes: string;
     FNomeFantasiaClientes: string;
     FSitCadastralClientes: string;
+    FNumRuaClientes: Integer;
 
     FQuery: TFDQuery; // Query para interagir com o banco de dados
     FDatabaseConnection: TDatabaseConnection; // Conexão centralizada
@@ -63,6 +64,9 @@ type
 
     function GetSitCadastralClientes: string;
     procedure SetSitCadastralClientes(const Value: string);
+
+    function GetNumRuaClientes: Integer;
+    procedure SetNumRuaClientes(const Value: Integer);
 
   public
     constructor Create;
@@ -229,9 +233,19 @@ begin
   Result := FNomeFantasiaClientes;
 end;
 
+function TCliente.GetNumRuaClientes: Integer;
+begin
+  Result := FNumRuaClientes;
+end;
+
 procedure TCliente.SetNomeFantasiaClientes(const Value: string);
 begin
   FNomeFantasiaClientes := Value;
+end;
+
+procedure TCliente.SetNumRuaClientes(const Value: Integer);
+begin
+  FNumRuaClientes := Value;
 end;
 
 function TCliente.GetSitCadastralClientes: string;
@@ -343,10 +357,10 @@ begin
         // Inserir novo pedido
         FQuery.SQL.Text := 'INSERT INTO Clientes (CNPJClientes, NomeClientes, CEPClientes, RuaClientes, ' +
                            'BairroClientes, CidadeClientes, UFClientes, LongitudeClientes, LatitudeClientes, ' +
-                           'CodIBGEClientes, NomeFantasiaClientes, SitCadastralClientes) ' +
+                           'CodIBGEClientes, NomeFantasiaClientes, SitCadastralClientes, NumeroRuaClientes) ' +
 
                            'VALUES (:CNPJ, :Nome, :CEP, :Rua, :Bairro, :Cidade, :UF, :Longitude, :Latitude, ' +
-                           ':CodIBGE, :NomeFantasia, :SitCadastral)';
+                           ':CodIBGE, :NomeFantasia, :SitCadastral, :NumeroRua)';
 
       end
       else
@@ -358,7 +372,8 @@ begin
           'BairroClientes = :Bairro, CidadeClientes = :Cidade, UFClientes = :UF, ' +
           'LongitudeClientes = :Longitude, LatitudeClientes = :Latitude, ' +
           'CodIBGEClientes = :CodIBGE, NomeFantasiaClientes = :NomeFantasia, ' +
-          'SitCadastralClientes = :SitCadastral ' +
+          'SitCadastralClientes = :SitCadastral, ' +
+          'NumeroRuaClientes = :NumeroRua ' +
 
           'WHERE CodigoClientes = :CodigoCliente';
 
@@ -378,6 +393,7 @@ begin
       FQuery.ParamByName('CodIBGE').AsString := FCodIBGEClientes;
       FQuery.ParamByName('NomeFantasia').AsString := FNomeFantasiaClientes;
       FQuery.ParamByName('SitCadastral').AsString := FSitCadastralClientes;
+      FQuery.ParamByName('NumeroRua').AsInteger := FNumRuaClientes;
 
       // Executa a query
       FQuery.ExecSQL;

@@ -4,7 +4,7 @@ object FDadosClientes: TFDadosClientes
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Dados do Cliente'
-  ClientHeight = 334
+  ClientHeight = 327
   ClientWidth = 599
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -18,7 +18,7 @@ object FDadosClientes: TFDadosClientes
   TextHeight = 13
   object PRodape: TPanel
     Left = 0
-    Top = 293
+    Top = 286
     Width = 599
     Height = 41
     Align = alBottom
@@ -70,14 +70,12 @@ object FDadosClientes: TFDadosClientes
     Left = 0
     Top = 0
     Width = 599
-    Height = 293
+    Height = 286
     Align = alClient
     TabOrder = 0
-    ExplicitLeft = 8
-    ExplicitTop = 8
     object SBF2: TSpeedButton
-      Left = 175
-      Top = 37
+      Left = 245
+      Top = 36
       Width = 107
       Height = 22
       Caption = 'F2 -Concultar CNPJ'
@@ -85,67 +83,97 @@ object FDadosClientes: TFDadosClientes
       OnClick = SBF2Click
     end
     object LNomeFant: TLabel
-      Left = 28
-      Top = 158
+      Left = 30
+      Top = 96
       Width = 75
       Height = 13
       Caption = 'Nome Fantasia:'
     end
     object LEnd: TLabel
-      Left = 54
-      Top = 182
+      Left = 56
+      Top = 151
       Width = 49
       Height = 13
       Caption = 'Endere'#231'o:'
     end
     object LNum: TLabel
-      Left = 62
-      Top = 206
+      Left = 64
+      Top = 178
       Width = 41
       Height = 13
       Caption = 'N'#250'mero:'
     end
     object LBairro: TLabel
-      Left = 71
-      Top = 230
+      Left = 73
+      Top = 206
       Width = 32
       Height = 13
       Caption = 'Bairro:'
     end
     object LLong: TLabel
-      Left = 473
-      Top = 159
+      Left = 429
+      Top = 178
       Width = 51
       Height = 13
       Caption = 'Longitude:'
     end
     object LLati: TLabel
-      Left = 481
-      Top = 182
+      Left = 437
+      Top = 206
       Width = 43
       Height = 13
       Caption = 'Latitude:'
     end
     object LCIBGE: TLabel
-      Left = 446
-      Top = 206
+      Left = 402
+      Top = 233
       Width = 78
       Height = 13
       Caption = 'Codigo do IBGE:'
     end
     object LSituacao: TLabel
-      Left = 428
-      Top = 230
+      Left = 384
+      Top = 260
       Width = 96
       Height = 13
       Caption = 'Situa'#231#227'o do Cliente:'
     end
     object Label1: TLabel
-      Left = 28
-      Top = 138
+      Left = 41
+      Top = 68
       Width = 64
       Height = 13
       Caption = 'Raz'#227'o Social:'
+    end
+    object Label2: TLabel
+      Left = 82
+      Top = 123
+      Width = 23
+      Height = 13
+      Caption = 'CEP:'
+    end
+    object SpeedButton1: TSpeedButton
+      Left = 207
+      Top = 118
+      Width = 145
+      Height = 22
+      Caption = 'F3 -Concultar CEP'
+      StyleName = 'Windows'
+      OnClick = SpeedButton1Click
+    end
+    object LCidade: TLabel
+      Left = 68
+      Top = 232
+      Width = 37
+      Height = 13
+      Caption = 'Cidade:'
+    end
+    object LUF: TLabel
+      Left = 88
+      Top = 259
+      Width = 17
+      Height = 13
+      Caption = 'UF:'
     end
     object LECodigoCliente: TLabeledEdit
       Left = 108
@@ -161,19 +189,151 @@ object FDadosClientes: TFDadosClientes
       TabOrder = 0
       Text = ''
     end
-    object LabeledEdit1: TLabeledEdit
+    object LECNPJ: TLabeledEdit
       Left = 108
       Top = 37
-      Width = 61
+      Width = 133
       Height = 21
-      EditLabel.Width = 88
+      EditLabel.Width = 29
       EditLabel.Height = 21
-      EditLabel.Caption = 'C'#243'digo do Cliente:'
-      Enabled = False
+      EditLabel.Caption = 'CNPJ:'
       LabelPosition = lpLeft
+      MaxLength = 14
       NumbersOnly = True
       TabOrder = 1
       Text = ''
+    end
+    object ERazao: TEdit
+      Left = 108
+      Top = 64
+      Width = 244
+      Height = 21
+      TabStop = False
+      ReadOnly = True
+      TabOrder = 2
+    end
+    object EFantasia: TEdit
+      Left = 108
+      Top = 92
+      Width = 244
+      Height = 21
+      TabStop = False
+      ReadOnly = True
+      TabOrder = 3
+    end
+    object ECEP: TEdit
+      Left = 108
+      Top = 119
+      Width = 93
+      Height = 21
+      MaxLength = 8
+      NumbersOnly = True
+      TabOrder = 4
+    end
+    object EEndereco: TEdit
+      Left = 108
+      Top = 147
+      Width = 244
+      Height = 21
+      TabStop = False
+      ReadOnly = True
+      TabOrder = 5
+    end
+    object ENumero: TEdit
+      Left = 108
+      Top = 174
+      Width = 64
+      Height = 21
+      NumbersOnly = True
+      TabOrder = 6
+    end
+    object EBairro: TEdit
+      Left = 108
+      Top = 202
+      Width = 181
+      Height = 21
+      TabStop = False
+      ReadOnly = True
+      TabOrder = 7
+    end
+    object ESituacao: TEdit
+      Left = 486
+      Top = 256
+      Width = 93
+      Height = 21
+      TabStop = False
+      Color = clRed
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 10
+    end
+    object ELongitude: TEdit
+      Left = 486
+      Top = 174
+      Width = 93
+      Height = 21
+      TabStop = False
+      ReadOnly = True
+      TabOrder = 11
+    end
+    object ELatidude: TEdit
+      Left = 486
+      Top = 202
+      Width = 93
+      Height = 21
+      TabStop = False
+      ReadOnly = True
+      TabOrder = 12
+    end
+    object EIBGE: TEdit
+      Left = 486
+      Top = 229
+      Width = 93
+      Height = 21
+      TabStop = False
+      ReadOnly = True
+      TabOrder = 13
+    end
+    object ECidade: TEdit
+      Left = 108
+      Top = 229
+      Width = 181
+      Height = 21
+      TabStop = False
+      ReadOnly = True
+      TabOrder = 8
+    end
+    object EUF: TEdit
+      Left = 108
+      Top = 256
+      Width = 29
+      Height = 21
+      TabStop = False
+      ReadOnly = True
+      TabOrder = 9
+    end
+    object MJSonCNPJ: TMemo
+      Left = 354
+      Top = 37
+      Width = 225
+      Height = 48
+      Color = 14408667
+      ScrollBars = ssVertical
+      TabOrder = 14
+    end
+    object MJSonCEP: TMemo
+      Left = 355
+      Top = 119
+      Width = 224
+      Height = 49
+      Color = 14408667
+      ScrollBars = ssVertical
+      TabOrder = 15
     end
   end
 end

@@ -9,7 +9,8 @@ uses
   Controller.ClienteController, Interfaces.ICliente,
   CXConst, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
-  FireDAC.Stan.StorageBin, FireDAC.Comp.DataSet, FireDAC.Comp.Client;
+  FireDAC.Stan.StorageBin, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
+  Utils.BrasilAPI;
 
 type
   TFDadosClientes = class(TForm)
@@ -28,20 +29,36 @@ type
     LCIBGE: TLabel;
     LSituacao: TLabel;
     Label1: TLabel;
-    LabeledEdit1: TLabeledEdit;
+    LECNPJ: TLabeledEdit;
+    ERazao: TEdit;
+    EFantasia: TEdit;
+    Label2: TLabel;
+    ECEP: TEdit;
+    SpeedButton1: TSpeedButton;
+    EEndereco: TEdit;
+    ENumero: TEdit;
+    EBairro: TEdit;
+    ESituacao: TEdit;
+    ELongitude: TEdit;
+    ELatidude: TEdit;
+    EIBGE: TEdit;
+    ECidade: TEdit;
+    LCidade: TLabel;
+    EUF: TEdit;
+    LUF: TLabel;
+    MJSonCNPJ: TMemo;
+    MJSonCEP: TMemo;
     procedure BBSairClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure SBF2Click(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure BBGravarClick(Sender: TObject);
+    procedure SBF2Click(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
   private
     { Private declarations }
     FClienteController: TClienteController;
+    FBrasilAPI: TBrasilAPI;
 
-    procedure TratarDelete;
-    procedure pCRUD(pAcao: TAcao);
-    procedure pAtualizacao;
-    procedure pConsultClientes;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -61,63 +78,71 @@ constructor TFDadosClientes.Create(AOwner: TComponent);
 begin
   inherited;
   FClienteController := TClienteController.Create;
+  FBrasilAPI := TBrasilAPI.Create;
 end;
 
 destructor TFDadosClientes.Destroy;
 begin
   FClienteController.Free;
+  FBrasilAPI.Free;
   inherited;
 end;
 
 procedure TFDadosClientes.BBGravarClick(Sender: TObject);
 var
-  Pedido: IPedido;
+  Cliente: ICliente;
 begin
-  Pedido := FPedidoController.GetPedido;
-
-  // Preenche os dados do pedido
-  Pedido.NumeroPedido := StrToIntDef(LENumeroPedido.Text, 0);
-  Pedido.DataEmissao := DTPDataEmissao.DateTime;
-  Pedido.Cliente := StrToIntDef(LECodigoCliente.Text, 0);
+  Cliente := FClienteController.GetCliente;
+  {
   Pedido.ValorTotal := StrToFloatDef(StringReplace(
                                      LETotalPedido.Text, '.', '',
                                      [rfReplaceAll, rfIgnoreCase]), 0);
+  }
 
-  // Salva o pedido
-  if FPedidoController.SalvarPedido(Pedido) then
+  // Preenche os dados
+  Cliente.CodigoClientes := StrToIntDef(LECodigoCliente.Text, 0);
+  Cliente.CNPJClientes := LECNPJ.Text;
+  Cliente.NomeClientes := ERazao.Text;
+  Cliente.CEPClientes := ECEP.Text;
+  Cliente.RuaClientes := EEndereco.Text;
+  Cliente.BairroClientes := EBairro.Text;
+  Cliente.UFClientes := EUF.Text;
+  Cliente.LongitudeClientes := StrToFloatDef(ELongitude.Text,0);
+  Cliente.LatitudeClientes := StrToFloatDef(ELatidude.Text,0);
+  Cliente.CodIBGEClientes := EIBGE.Text;
+  Cliente.NomeFantasiaClientes := EFantasia.Text;
+  Cliente.SitCadastralClientes := ESituacao.Text;
+  Cliente.NumRuaClientes := StrToIntDef(ENumero.Text,0);
+
+  // Salva
+  if FClienteController.SalvarCliente(Cliente) then
   begin
     // Atualiza o campo NumeroPedido com o ID gerado
-    LENumeroPedido.Text := IntToStr(Pedido.NumeroPedido);
+    LECodigoCliente.Text := IntToStr(Cliente.CodigoClientes);
 
-    ShowMessage('Sucesso na Gravação do Pedido '+LENumeroPedido.Text+'.');
+    ShowMessage('Sucesso na Gravação do Cliente '+LECodigoCliente.Text+'.');
   end
   else
-    ShowMessage('Sem Sucesso na Gravação do Pedido '+LENumeroPedido.Text+'.'+cEOL+
+    ShowMessage('Sem Sucesso na Gravação do Cliente '+LECodigoCliente.Text+'.'+cEOL+
       'Falta informar o Código do Cliente!');
-  pAtualizacao;
 end;
 
 procedure TFDadosClientes.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   if key = vk_F2 then
-end;
-
-procedure TFDadosClientes.pAtualizacao;
-begin
-end;
-
-procedure TFDadosClientes.pCRUD(pAcao: TAcao);
-begin
+  else if key = vk_F3 then
 end;
 
 procedure TFDadosClientes.SBF2Click(Sender: TObject);
 begin
-  pConsultClientes;
+  MJSonCNPJ.Clear;
 end;
 
-procedure TFDadosClientes.pConsultClientes;
+procedure TFDadosClientes.SpeedButton1Click(Sender: TObject);
 begin
+  MJSonCEP.Clear;
+  MJSonCEP.Lines.Add(FBrasilAPI.FConsultarCEP(ECEP.Text));
 end;
 
 procedure TFDadosClientes.BBSairClick(Sender: TObject);

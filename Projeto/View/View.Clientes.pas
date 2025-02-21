@@ -85,7 +85,7 @@ implementation
 
 {$R *.dfm}
 
-uses View.Dados.Clientes, Utils.DMUtils;
+uses Utils.DMUtils, View.Dados.Clientes;
 
 constructor TFViewClientes.Create(AOwner: TComponent);
 begin
@@ -148,9 +148,8 @@ begin
 end;
 
 procedure TFViewClientes.pCRUD(pAcao: TAcao);
-{
 var
-  FormPedido: TFDadosPedidos;}
+  FormCliente: TFDadosClientes;
 begin
   if (DSViewClientes.DataSet.FieldByName('CodigoClientes').IsNull) and
      (pAcao <> acIncluir) then
@@ -162,34 +161,41 @@ begin
 
   if (pAcao = acExcluir) then
   begin
-  {
     if FClienteController.ExcluirCliente(
-       DSViewClientes.DataSet.FieldByName('NumeroPedidos').AsInteger) then
-      ShowMessage('Pedido excluído com sucesso!')
+       DSViewClientes.DataSet.FieldByName('CodigoClientes').AsInteger) then
+      ShowMessage('Cliente excluído com sucesso!')
     else
-      ShowMessage('Erro ao excluir pedido.');}
+      ShowMessage('Erro ao excluir pedido.');
   end
   else
   begin
-    {
-    FormPedido := TFDadosPedidos.Create(Application);
+    FormCliente := TFDadosClientes.Create(Application);
     if (pAcao = acIncluir) then
     begin
-      FormPedido.Caption := FormPedido.Caption + '-' + cAcaoIncluir;
-      FormPedido.LENumeroPedido.Clear;
-      FormPedido.DTPDataEmissao.DateTime := Now;
+      FormCliente.Caption := FormCliente.Caption + ' - ' + cAcaoIncluir;
+
+      FormCliente.LECodigoCliente.Clear;
     end
     else
     begin
-      FormPedido.Caption := FormPedido.Caption + '-' + cAcaoAlterar;
-      FormPedido.LENumeroPedido.Text := DSViewPedidos.DataSet.FieldByName('NumeroPedidos').AsString;
-      FormPedido.DTPDataEmissao.DateTime := DSViewPedidos.DataSet.FieldByName('DataEmissaoPedidos').AsDateTime;
-      FormPedido.LECodigoCliente.Text := DSViewPedidos.DataSet.FieldByName('ClientePedidos').AsString;
-      FormPedido.EDescCliente.Text := DSViewPedidos.DataSet.FieldByName('NomeClientes').AsString;
-      FormPedido.LETotalPedido.Text := DSViewPedidos.DataSet.FieldByName('ValorTotalPedidos').AsString;
+      FormCliente.Caption := FormCliente.Caption + ' - ' + cAcaoAlterar;
+
+      FormCliente.LECodigoCliente.Text := DSViewClientes.DataSet.FieldByName('CodigoClientes').AsString;
+      FormCliente.LECNPJ.Text := DSViewClientes.DataSet.FieldByName('CNPJClientes').AsString;
+      FormCliente.ERazao.Text := DSViewClientes.DataSet.FieldByName('NomeClientes').AsString;
+      FormCliente.EFantasia.Text := DSViewClientes.DataSet.FieldByName('NomeFantasiaClientes').AsString;
+      FormCliente.ECEP.Text := DSViewClientes.DataSet.FieldByName('CEPClientes').AsString;
+      FormCliente.EEndereco.Text := DSViewClientes.DataSet.FieldByName('RuaClientes').AsString;
+      FormCliente.EBairro.Text := DSViewClientes.DataSet.FieldByName('BairroClientes').AsString;
+      FormCliente.ECidade.Text := DSViewClientes.DataSet.FieldByName('CidadeClientes').AsString;
+      FormCliente.EUF.Text := DSViewClientes.DataSet.FieldByName('UFClientes').AsString;
+      FormCliente.ELongitude.Text := DSViewClientes.DataSet.FieldByName('LongitudeClientes').AsString;
+      FormCliente.ELatidude.Text := DSViewClientes.DataSet.FieldByName('LatitudeClientes').AsString;
+      FormCliente.EIBGE.Text := DSViewClientes.DataSet.FieldByName('CodIBGEClientes').AsString;
+      FormCliente.ESituacao.Text := DSViewClientes.DataSet.FieldByName('SitCadastralClientes').AsString;
+      FormCliente.ENumero.Text := DSViewClientes.DataSet.FieldByName('NumeroRuaClientes').AsString;
     end;
-    FormPedido.ShowModal;
-    }
+    FormCliente.ShowModal;
   end;
   pAtualizacao;
 end;

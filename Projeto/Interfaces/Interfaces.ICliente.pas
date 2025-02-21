@@ -47,6 +47,9 @@ type
     function GetSitCadastralClientes: string;
     procedure SetSitCadastralClientes(const Value: string);
 
+    function GetNumRuaClientes: Integer;
+    procedure SetNumRuaClientes(const Value: Integer);
+
     property CodigoClientes: Integer read GetCodigoClientes write SetCodigoClientes;
     property CNPJClientes: string read GetCNPJClientes write SetCNPJClientes;
     property NomeClientes: string read GetNomeClientes write SetNomeClientes;
@@ -60,6 +63,7 @@ type
     property CodIBGEClientes: string read GetCodIBGEClientes write SetCodIBGEClientes;
     property NomeFantasiaClientes: string read GetNomeFantasiaClientes write SetNomeFantasiaClientes;
     property SitCadastralClientes: string read GetSitCadastralClientes write SetSitCadastralClientes;
+    property NumRuaClientes: Integer read GetNumRuaClientes write SetNumRuaClientes;
 
     procedure CarregarDados(const AFDMemTable: TFDMemTable; pId, pNomeCliente: String); // Método para carregar dados
     function CarregarNomePorId(pId: String) : String; // Implementação do método Carregar Nome por Id

@@ -195,6 +195,7 @@
             <Form>FDadosClientes</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="Utils\Utils.BrasilAPI.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

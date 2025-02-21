@@ -1,0 +1,28 @@
+unit IPedido;
+
+interface
+
+uses
+  System.SysUtils;
+
+type
+  IPedido = interface
+    ['{7DE0B022-2B25-4116-93C4-56C7EC6E70D9}']
+    function GetNumeroPedido: Integer;
+    function GetDataEmissao: TDateTime;
+    function GetCliente: Integer;
+    function GetValorTotal: Double;
+    procedure SetNumeroPedido(const Value: Integer);
+    procedure SetDataEmissao(const Value: TDateTime);
+    procedure SetCliente(const Value: Integer);
+    procedure SetValorTotal(const Value: Double);
+
+    property NumeroPedido: Integer read GetNumeroPedido write SetNumeroPedido;
+    property DataEmissao: TDateTime read GetDataEmissao write SetDataEmissao;
+    property Cliente: Integer read GetCliente write SetCliente;
+    property ValorTotal: Double read GetValorTotal write SetValorTotal;
+  end;
+
+implementation
+
+end.

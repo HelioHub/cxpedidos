@@ -2,7 +2,7 @@
 
 Cadastro de Pedidos e Clientes
 
-## Agrecimento pela Oportunidade
+## Agredecimento pela Oportunidade
 
 ![## Atenção CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/Atencao3.png)
 ![## Atenção CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/Atencao.png)
@@ -10,15 +10,25 @@ Cadastro de Pedidos e Clientes
 ## Requisitos 
 
 -Criar um projeto VCL com um CRUD de clientes
+
 -Realizar a integração da seguinte API para consulta de CEP: https://brasilapi.com.br/docs#tag/CEP
+
 -Realizar a integração da seguinte API para consulta de CNPJ: https://brasilapi.com.br/docs#tag/CNPJ
+
 -Realizar a integração da seguinte API para trazer o código do IBGE e informar no cadastro do cliente: https://brasilapi.com.br/docs#tag/IBGE
+
 -Salvar os dados e exibir em uma grid e também ter a opção de editar ou excluir o registro da grid
+
 -Realizar a impressão de todos os registros
+
 -Realizar a impressão de registros selecionados
+
 -Realizar a alteração na rotina de consulta CEP para trazer a latitude e longitude: https://brasilapi.com.br/docs#tag/CEP-V2 
+
 -As informações podem ser salvar em um banco ou em memoria(Memtable) - (caso for usar banco de teste nos passe o banco para poder testar a aplicação)
+
 -Enviar o fonte por email ou o link do github com o projeto publico
+
 
 ## Diagrama de Entidade e Relacionamento 
 
@@ -90,7 +100,8 @@ Cadastro de Pedidos e Clientes
 	  `CodIBGEClientes` VARCHAR(10) NULL,
 	  `NomeFantasiaClientes` VARCHAR(100) NULL,
 	  `SitCadastralClientes` VARCHAR(30) NULL,
-	  PRIMARY KEY (`CodigoClientes`),
+	  `NumeroRuaClientes` INT NULL,
+      PRIMARY KEY (`CodigoClientes`),
 	  INDEX `INDEX_NOME` (`NomeClientes` ASC))
 	ENGINE = InnoDB;
 

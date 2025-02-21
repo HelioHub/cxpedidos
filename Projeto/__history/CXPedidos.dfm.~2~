@@ -1,0 +1,151 @@
+object FWKPedidos: TFWKPedidos
+  Left = 0
+  Top = 0
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'CX Teste T'#233'cnico Pedidos e Clientes'
+  ClientHeight = 279
+  ClientWidth = 354
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  TextHeight = 13
+  object LWK: TLabel
+    Left = 0
+    Top = 0
+    Width = 354
+    Height = 46
+    Cursor = crHandPoint
+    Hint = 'Click para acessa nosso Site. Seja Bem-Vindo!!'
+    Align = alTop
+    Alignment = taCenter
+    Caption = 'CODGO.X'
+    Color = clSilver
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clRed
+    Font.Height = -40
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+    ParentShowHint = False
+    ShowHint = True
+    OnClick = LWKClick
+    ExplicitWidth = 189
+  end
+  object BBCadPedidos: TBitBtn
+    Left = 0
+    Top = 113
+    Width = 354
+    Height = 67
+    Cursor = crHandPoint
+    Hint = 'Acessa Cadastro de Pedidos'
+    Align = alTop
+    Caption = 'Cadastro de &Pedidos'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ImageIndex = 10
+    Images = DMUtils.ILImagensSystem
+    ParentFont = False
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 0
+    OnClick = BBCadPedidosClick
+  end
+  object BBFechar: TBitBtn
+    Left = 0
+    Top = 180
+    Width = 354
+    Height = 64
+    Cursor = crHandPoint
+    Hint = 'Fecha aplica'#231#227'o.'
+    Align = alClient
+    Cancel = True
+    Caption = '&Fechar Aplica'#231#227'o.'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ImageIndex = 8
+    Images = DMUtils.ILImagensSystem
+    ParentFont = False
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 1
+    OnClick = BBFecharClick
+  end
+  object PHost: TPanel
+    Left = 0
+    Top = 244
+    Width = 354
+    Height = 35
+    Align = alBottom
+    Alignment = taLeftJustify
+    Caption = '  Host:'
+    TabOrder = 2
+    DesignSize = (
+      354
+      35)
+    object EHostName: TEdit
+      Left = 41
+      Top = 6
+      Width = 108
+      Height = 21
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
+      Alignment = taCenter
+      Color = clRed
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 0
+      Text = '127.0.0.1'
+      TextHint = 'Hostname or IP Address'
+    end
+    object BExecFolder: TButton
+      Left = 232
+      Top = 5
+      Width = 115
+      Height = 25
+      Anchors = [akTop, akRight]
+      Caption = 'Execution Folder'
+      TabOrder = 1
+      OnClick = BExecFolderClick
+    end
+  end
+  object BBCadClientes: TBitBtn
+    Left = 0
+    Top = 46
+    Width = 354
+    Height = 67
+    Cursor = crHandPoint
+    Hint = 'Acessa Cadastro de Clientes'
+    Align = alTop
+    Caption = 'Cadastro de &Clientes'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ImageIndex = 9
+    Images = DMUtils.ILImagensSystem
+    ParentFont = False
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 3
+    OnClick = BBCadPedidosClick
+  end
+end

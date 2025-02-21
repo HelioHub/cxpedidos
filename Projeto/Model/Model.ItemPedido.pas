@@ -1,0 +1,604 @@
+unit Model.ItemPedido;
+
+interface
+
+uses
+  Interfaces.IItemPedido, FireDAC.Comp.Client, Data.DB, Utils.DatabaseConnection;
+
+type
+  TItemPedido = class(TInterfacedObject, IItemPedido)
+  private
+    FIdItemPedido: Integer;
+    FPedido: Integer;
+    FProduto: Integer;
+    FQuantidade: Double;
+    FValorUnitario: Double;
+    FValorTotal: Double;
+    FQuery: TFDQuery; // Query para interagir com o banco de dados
+    FDatabaseConnection: TDatabaseConnection; // Conexão centralizada
+
+    function GetIdItemPedido: Integer;
+    function GetPedido: Integer;
+    function GetProduto: Integer;
+    function GetQuantidade: Double;
+    function GetValorUnitario: Double;
+    function GetValorTotal: Double;
+
+    procedure SetIdItemPedido(const Value: Integer);
+    procedure SetPedido(const Value: Integer);
+    procedure SetProduto(const Value: Integer);
+    procedure SetQuantidade(const Value: Double);
+    procedure SetValorUnitario(const Value: Double);
+    procedure SetValorTotal(const Value: Double);
+
+    function GerarCabecalhoPedido: string;
+    function GerarDetalhesItensPedido(pPedido : Integer): string;
+    function GerarRodapePedido(pTotalPedido : Double): string;
+    function GerarGraficoHTML(const FileName: string): string;
+    function GerarGraficoPizzaHTML(const FileName: string): String;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    property IdItemPedido: Integer read GetIdItemPedido write SetIdItemPedido;
+    property Pedido: Integer read GetPedido write SetPedido;
+    property Produto: Integer read GetProduto write SetProduto;
+    property Quantidade: Double read GetQuantidade write SetQuantidade;
+    property ValorUnitario: Double read GetValorUnitario write SetValorUnitario;
+    property ValorTotal: Double read GetValorTotal write SetValorTotal;
+
+    function Salvar: Boolean; // Implementação do método Salvar
+    function Excluir(const AId: Integer): Boolean; // Implementação do método Excluir
+    function CalcularTotalItens(const AIdPedido: Integer): Double; // Implementação do método CalcularTotalItens
+    function GerarRelatorioHTML(const pDtIni, pDtFin: TDate): string; //Relatório HTML
+
+    procedure CarregarDados(const AFDMemTable: TFDMemTable; pPedido: String); // Implementação do método CarregarDados
+    procedure MaisVendido(const AFDMemTable: TFDMemTable); // Método Mais Vendido dos Pedidos.
+end;
+
+implementation
+
+uses
+  FireDAC.DApt, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
+  FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
+  FireDAC.Phys, FireDAC.VCLUI.Wait, FireDAC.Comp.UI, FireDAC.Phys.MySQL,
+  FireDAC.Phys.MySQLDef, System.SysUtils, System.Classes, Vcl.Dialogs, Utils.ErrorLogger;
+
+{ TItemPedido }
+
+constructor TItemPedido.Create;
+begin
+  // Usa a conexão centralizada com parâmetros do arquivo .INI
+  FDatabaseConnection := TDatabaseConnection.Create;
+  FQuery := TFDQuery.Create(nil);
+  FQuery.Connection := FDatabaseConnection.Connection;
+end;
+
+destructor TItemPedido.Destroy;
+begin
+  FQuery.Free;
+  FDatabaseConnection.Free;
+  inherited;
+end;
+
+function TItemPedido.GetIdItemPedido: Integer;
+begin
+  Result := FIdItemPedido;
+end;
+
+function TItemPedido.GetPedido: Integer;
+begin
+  Result := FPedido;
+end;
+
+function TItemPedido.GetProduto: Integer;
+begin
+  Result := FProduto;
+end;
+
+function TItemPedido.GetQuantidade: Double;
+begin
+  Result := FQuantidade;
+end;
+
+function TItemPedido.GetValorUnitario: Double;
+begin
+  Result := FValorUnitario;
+end;
+
+procedure TItemPedido.MaisVendido(const AFDMemTable: TFDMemTable);
+begin
+  try
+    // Prepara a query para selecionar os dados
+    FQuery.SQL.Clear;
+    FQuery.SQL.Add(' SELECT pr.CodigoProdutos,');
+    FQuery.SQL.Add('        pr.DescricaoProdutos,');
+    FQuery.SQL.Add('        SUM(ip.QuantidadeItensPedido) AS TotalVendido');
+    FQuery.SQL.Add(' FROM WKPedidos.ItensPedido ip');
+    FQuery.SQL.Add(' JOIN WKPedidos.Produtos pr ON ip.ProdutoItensPedido = pr.CodigoProdutos');
+    FQuery.SQL.Add(' GROUP BY pr.CodigoProdutos, pr.DescricaoProdutos');
+    FQuery.SQL.Add(' ORDER BY TotalVendido DESC');
+    FQuery.Open;
+
+    // Copia os dados para o TFDMemTable
+    begin
+      AFDMemTable.Close;
+      AFDMemTable.Data := FQuery.Data;
+      AFDMemTable.Open;
+    end;
+  except
+    on E: Exception do
+    begin
+      raise Exception.Create('Erro ao carregar dados: ' + E.Message);
+    end;
+  end;
+end;
+
+function TItemPedido.GetValorTotal: Double;
+begin
+  Result := FValorTotal;
+end;
+
+procedure TItemPedido.SetIdItemPedido(const Value: Integer);
+begin
+  FIdItemPedido := Value;
+end;
+
+procedure TItemPedido.SetPedido(const Value: Integer);
+begin
+  FPedido := Value;
+end;
+
+procedure TItemPedido.SetProduto(const Value: Integer);
+begin
+  FProduto := Value;
+end;
+
+procedure TItemPedido.SetQuantidade(const Value: Double);
+begin
+  FQuantidade := Value;
+end;
+
+procedure TItemPedido.SetValorUnitario(const Value: Double);
+begin
+  FValorUnitario := Value;
+end;
+
+procedure TItemPedido.SetValorTotal(const Value: Double);
+begin
+  FValorTotal := Value;
+end;
+
+function TItemPedido.CalcularTotalItens(const AIdPedido: Integer): Double;
+begin
+  Result := 0;
+  try
+    // Prepara a query para calcular o total dos itens do pedido
+    FQuery.SQL.Clear;
+    FQuery.SQL.Add('SELECT SUM(VlrTotalItensPedido) AS TotalItens');
+    FQuery.SQL.Add('FROM ItensPedido');
+    FQuery.SQL.Add('WHERE PedidoItensPedido = :Pedido');
+    FQuery.ParamByName('Pedido').AsInteger := AIdPedido;
+    FQuery.Open;
+
+    // Retorna o total dos itens
+    if not FQuery.FieldByName('TotalItens').IsNull then
+      Result := FQuery.FieldByName('TotalItens').AsFloat;
+  except
+    on E: Exception do
+    begin
+      raise Exception.Create('Erro ao calcular total dos itens: ' + E.Message);
+    end;
+  end;
+end;
+
+function TItemPedido.Salvar: Boolean;
+var
+  Logger: TErrorLogger;
+begin
+  Result := False;
+  Logger := TErrorLogger.Create; // Usa o caminho padrão 'error.log'
+  try
+
+  FDatabaseConnection.Connection.StartTransaction;
+  try
+    // Prepara a query para inserir ou atualizar o item de pedido
+    FQuery.SQL.Clear;
+    if FIdItemPedido = 0 then
+    begin
+      // Inserir novo item de pedido
+      FQuery.SQL.Add('INSERT INTO ItensPedido (PedidoItensPedido,     '+
+                                             ' ProdutoItensPedido,    '+
+                                             ' QuantidadeItensPedido, '+
+                                             ' VlrUnitarioItensPedido,'+
+                                             ' VlrTotalItensPedido)');
+      FQuery.SQL.Add('VALUES (:Pedido, :Produto, :Quantidade, :ValorUnitario, :ValorTotal)');
+    end
+    else
+    begin
+      // Atualizar item de pedido existente
+      FQuery.SQL.Add('UPDATE ItensPedido SET');
+      FQuery.SQL.Add('PedidoItensPedido = :Pedido,');
+      FQuery.SQL.Add('ProdutoItensPedido = :Produto,');
+      FQuery.SQL.Add('QuantidadeItensPedido = :Quantidade,');
+      FQuery.SQL.Add('VlrUnitarioItensPedido = :ValorUnitario,');
+      FQuery.SQL.Add('VlrTotalItensPedido = :ValorTotal');
+      FQuery.SQL.Add('WHERE idItensPedido = :IdItemPedido');
+      FQuery.ParamByName('IdItemPedido').AsInteger := FIdItemPedido;
+    end;
+
+    // Define os parâmetros da query
+    FQuery.ParamByName('Pedido').AsInteger := FPedido;
+    FQuery.ParamByName('Produto').AsInteger := FProduto;
+    FQuery.ParamByName('Quantidade').AsFloat := FQuantidade;
+    FQuery.ParamByName('ValorUnitario').AsFloat := FValorUnitario;
+    FQuery.ParamByName('ValorTotal').AsFloat := FValorTotal;
+
+    // Executa a query
+    FQuery.ExecSQL;
+
+    // Se for uma inserção, recupera o ID gerado
+    if FIdItemPedido = 0 then
+    begin
+      FQuery.SQL.Clear;
+      FQuery.SQL.Add('SELECT LAST_INSERT_ID() AS LastID');
+      FQuery.Open;
+      FIdItemPedido := FQuery.FieldByName('LastID').AsInteger;
+    end;
+
+    FDatabaseConnection.Connection.Commit;
+    Result := True; // Indica que o item de pedido foi salvo com sucesso
+  except
+    on E: Exception do
+    begin
+      FDatabaseConnection.Connection.Rollback;
+      Logger.LogError(E);
+      raise Exception.Create('Erro ao salvar item de pedido: ' + E.Message);
+    end;
+  end;
+
+  finally
+    Logger.Free;
+  end;
+end;
+
+procedure TItemPedido.CarregarDados(const AFDMemTable: TFDMemTable; pPedido: String);
+begin
+  try
+    // Prepara a query para selecionar os dados
+    FQuery.SQL.Clear;
+    FQuery.SQL.Add(' SELECT a.idItensPedido, a.PedidoItensPedido,');
+    FQuery.SQL.Add('        a.ProdutoItensPedido, a.QuantidadeItensPedido,');
+    FQuery.SQL.Add('        a.VlrUnitarioItensPedido, a.VlrTotalItensPedido,');
+    FQuery.SQL.Add('        b.DescricaoProdutos');
+    FQuery.SQL.Add(' FROM ItensPedido a ');
+    FQuery.SQL.Add(' JOIN Produtos b ON b.CodigoProdutos = a.ProdutoItensPedido ');
+    if not pPedido.IsEmpty then
+      FQuery.SQL.Add(' WHERE PedidoItensPedido = '+pPedido);
+    FQuery.SQL.Add(' ORDER BY a.ProdutoItensPedido = '+pPedido);
+    FQuery.Open;
+
+    // Copia os dados para o TFDMemTable
+    begin
+      AFDMemTable.Close;
+      AFDMemTable.Data := FQuery.Data;
+      AFDMemTable.Open;
+    end;
+  except
+    on E: Exception do
+    begin
+      raise Exception.Create('Erro ao carregar dados: ' + E.Message);
+    end;
+  end;
+end;
+
+function TItemPedido.Excluir(const AId: Integer): Boolean;
+begin
+  Result := False;
+  try
+    // Prepara a query para excluir o item de pedido
+    FQuery.SQL.Clear;
+    FQuery.SQL.Add('DELETE FROM ItensPedido WHERE idItensPedido = :IdItemPedido');
+    FQuery.ParamByName('IdItemPedido').AsInteger := AId;
+
+    // Executa a query
+    FQuery.ExecSQL;
+
+    Result := True; // Indica que o item de pedido foi excluído com sucesso
+  except
+    on E: Exception do
+    begin
+      raise Exception.Create('Erro ao excluir item de pedido: ' + E.Message);
+    end;
+  end;
+end;
+
+function TItemPedido.GerarCabecalhoPedido: string;
+begin
+  Result :=
+    '<div class="cabecalho">' +
+    '  <h1>Pedido: ' + FQuery.FieldByName('NumeroPedidos').AsString + '</h1>' +
+    '  <p><strong>Data de Emissao:</strong> ' + FormatDateTime('dd/mm/yyyy', FQuery.FieldByName('DataEmissaoPedidos').AsDateTime) + '</p>' +
+    '  <p><strong>Cliente:</strong> ' + FQuery.FieldByName('NomeClientes').AsString + '</p>' +
+    '</div>';
+end;
+
+function TItemPedido.GerarDetalhesItensPedido(pPedido : Integer): string;
+begin
+  Result :=
+    '<table class="tabela-itens">' +
+    '  <thead>' +
+    '    <tr>' +
+    '      <th>Item</th>' +
+    '      <th>Produto</th>' +
+    '      <th>Quantidade</th>' +
+    '      <th>Valor Unitario</th>' +
+    '      <th>Valor Total</th>' +
+    '    </tr>' +
+    '  </thead>' +
+    '  <tbody>';
+
+  while Not FQuery.Eof And
+        (FQuery.FieldByName('NumeroPedidos').AsInteger = pPedido) do
+  begin
+    Result := Result +
+      '<tr>' +
+      '  <td>' + FQuery.FieldByName('idItensPedido').AsString + '</td>' +
+      '  <td>' + FQuery.FieldByName('DescricaoProdutos').AsString + '</td>' +
+      '  <td>' + FQuery.FieldByName('QuantidadeItensPedido').AsString + '</td>' +
+      '  <td style="text-align: right;">' + FormatFloat('R$ #,##0.00', FQuery.FieldByName('VlrUnitarioItensPedido').AsFloat) + '</td>' +
+      '  <td style="text-align: right;">' + FormatFloat('R$ #,##0.00', FQuery.FieldByName('VlrTotalItensPedido').AsFloat) + '</td>' +
+      '</tr>';
+    FQuery.Next;
+  end;
+
+  Result := Result + '</tbody></table>';
+end;
+
+function TItemPedido.GerarRodapePedido(pTotalPedido : Double): string;
+begin
+  Result :=
+    '<div class="rodape">' +
+    '  <p><strong>Total do Pedido:</strong> ' + FormatFloat('R$ #,##0.00', pTotalPedido) + '</p>' +
+    '</div>';
+end;
+
+function TItemPedido.GerarRelatorioHTML(const pDtIni, pDtFin: TDate): string;
+var
+  HTML: TStringList;
+  dTotalPedido : Double;
+begin
+  HTML := TStringList.Create;
+  try
+    // Executa a consulta SQL
+    FQuery.SQL.Text :=
+      'select a.NumeroPedidos, ' +
+      '       a.DataEmissaoPedidos, ' +
+      '       a.ClientePedidos, ' +
+      '       c.NomeClientes, ' +
+      '       b.idItensPedido, ' +
+      '       b.ProdutoItensPedido, ' +
+      '       d.DescricaoProdutos, ' +
+      '       b.QuantidadeItensPedido, ' +
+      '       b.VlrUnitarioItensPedido, ' +
+      '       b.VlrTotalItensPedido, ' +
+      '       a.ValorTotalPedidos ' +
+      'from pedidos a ' +
+      'inner join itenspedido b on b.PedidoItensPedido = a.NumeroPedidos ' +
+      'inner join clientes c on c.CodigoClientes = a.ClientePedidos ' +
+      'inner join produtos d on d.CodigoProdutos = b.ProdutoItensPedido ' +
+      'where a.DataEmissaoPedidos BETWEEN :pDtIni AND :pDtFin '+
+      'order by a.NumeroPedidos';
+    FQuery.ParamByName('pDtIni').AsDate := pDtIni;
+    FQuery.ParamByName('pDtFin').AsDate := pDtFin+1;
+    FQuery.Open;
+
+    // Gera o HTML do relatório
+    HTML.Add(
+      '<!DOCTYPE html>' +
+      '<html lang="pt-BR">' +
+      '<head>' +
+      '  <meta charset="UTF-8">' +
+      '  <meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+      '  <title>Relatorio de Pedido</title>' +
+      '  <style>' +
+      '    body { font-family: Arial, sans-serif; margin: 20px; }' +
+      '    .cabecalho { margin-bottom: 20px; }' +
+      '    .tabela-itens { width: 100%; border-collapse: collapse; margin-bottom: 20px; }' +
+      '    .tabela-itens th, .tabela-itens td { border: 1px solid #ddd; padding: 8px; text-align: left; }' +
+      '    .tabela-itens th { background-color: #f2f2f2; }' +
+      '    .rodape { margin-top: 20px; font-weight: bold; }' +
+      '  </style>' +
+      '</head>' +
+      '<body>'
+    );
+
+    while not FQuery.Eof do
+    begin
+      dTotalPedido := FQuery.FieldByName('ValorTotalPedidos').AsFloat;
+
+      HTML.Add(GerarCabecalhoPedido);
+      HTML.Add(GerarDetalhesItensPedido(FQuery.FieldByName('NumeroPedidos').AsInteger));
+      HTML.Add(GerarRodapePedido(dTotalPedido));
+    end;
+
+    HTML.Add(
+      '</body>' +
+      '</html>'
+    );
+
+    Result := HTML.Text;
+  finally
+    HTML.Free;
+  end;
+end;
+
+
+function TItemPedido.GerarGraficoHTML(const FileName: string): String;
+var
+  HTML: TStringList;
+  MaxTotalVendido: Integer;
+begin
+  FQuery.SQL.Text :=
+    'SELECT pr.CodigoProdutos, pr.DescricaoProdutos, SUM(ip.QuantidadeItensPedido) AS TotalVendido ' +
+    'FROM WKPedidos.ItensPedido ip ' +
+    'JOIN WKPedidos.Produtos pr ON ip.ProdutoItensPedido = pr.CodigoProdutos ' +
+    'GROUP BY pr.CodigoProdutos, pr.DescricaoProdutos ' +
+    'ORDER BY TotalVendido DESC';
+  FQuery.Open;
+
+  // Criar o HTML
+  HTML := TStringList.Create;
+  try
+    // Início do HTML
+    HTML.Add('<html>');
+    HTML.Add('<head>');
+    HTML.Add('<style>');
+    HTML.Add('  .bar-container { width: 80%; margin: auto; }');
+    HTML.Add('  .bar { background-color: #4CAF50; color: white; padding: 10px; margin: 5px 0; text-align: right; }');
+    HTML.Add('  .bar-label { float: left; }');
+    HTML.Add('</style>');
+    HTML.Add('</head>');
+    HTML.Add('<body>');
+
+    HTML.Add('<div class="cabecalho">' +
+        '  <h1>Gráfico dos Itens mais Vendidos de Barra</h1>' +
+        '  <p><strong>Hélio Marques</strong></p>' +
+        '</div>');
+
+    HTML.Add('<div class="bar-container">');
+
+    // Encontrar o valor máximo para normalizar as barras
+    MaxTotalVendido := 0;
+    FQuery.First;
+    while not FQuery.Eof do
+    begin
+      if FQuery.FieldByName('TotalVendido').AsInteger > MaxTotalVendido then
+        MaxTotalVendido := FQuery.FieldByName('TotalVendido').AsInteger;
+      FQuery.Next;
+    end;
+
+    // Gerar as barras
+    FQuery.First;
+    while not FQuery.Eof do
+    begin
+      HTML.Add(Format(
+        '<div class="bar" style="width: %d%%;">' +
+        '<span class="bar-label">%s</span>' +
+        '%d unidades' +
+        '</div>',
+        [Round((FQuery.FieldByName('TotalVendido').AsInteger / MaxTotalVendido) * 100),
+         FQuery.FieldByName('DescricaoProdutos').AsString,
+         FQuery.FieldByName('TotalVendido').AsInteger]
+      ));
+      FQuery.Next;
+    end;
+
+    // Fechar o HTML
+    HTML.Add('</div>');
+    HTML.Add('</body>');
+    HTML.Add('</html>');
+
+    Result := HTML.Text;
+  finally
+    HTML.Free;
+  end;
+end;
+
+function TItemPedido.GerarGraficoPizzaHTML(const FileName: string): String;
+var
+  HTML: TStringList;
+  Labels, Data, Colors: TStringList;
+  i: Integer;
+begin
+    FQuery.SQL.Text :=
+      'SELECT pr.CodigoProdutos, pr.DescricaoProdutos, SUM(ip.QuantidadeItensPedido) AS TotalVendido ' +
+      'FROM WKPedidos.ItensPedido ip ' +
+      'JOIN WKPedidos.Produtos pr ON ip.ProdutoItensPedido = pr.CodigoProdutos ' +
+      'GROUP BY pr.CodigoProdutos, pr.DescricaoProdutos ' +
+      'ORDER BY TotalVendido DESC';
+    FQuery.Open;
+
+    // Criar listas para armazenar labels, dados e cores
+    Labels := TStringList.Create;
+    Data := TStringList.Create;
+    Colors := TStringList.Create;
+    try
+      // Preencher as listas com os dados da query
+      FQuery.First;
+      while not FQuery.Eof do
+      begin
+
+        Labels.Add(QuotedStr(FQuery.FieldByName('DescricaoProdutos').AsString));
+        Labels.Text := StringReplace(Labels.Text, '"', '', [rfReplaceAll]);
+        Data.Add(FQuery.FieldByName('TotalVendido').AsString);
+        Colors.Add('"rgba(' + IntToStr(Random(256)) + ', ' + IntToStr(Random(256)) + ', ' + IntToStr(Random(256)) + ', 0.6)"');
+        Colors.Text := StringReplace(Colors.Text, '"', '', [rfReplaceAll]);
+
+        FQuery.Next;
+      end;
+
+      // Criar o HTML
+      HTML := TStringList.Create;
+      try
+        // Início do HTML
+        HTML.Add('<html>');
+        HTML.Add('<head>');
+        HTML.Add('<title>Gráfico de Pizza - Produtos Mais Vendidos</title>');
+        HTML.Add('<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>');
+        HTML.Add('<style>');
+        HTML.Add('  .cabecalho { text-align: center; margin-bottom: 20px; }');
+        HTML.Add('</style>');
+        HTML.Add('</head>');
+        HTML.Add('<body>');
+
+        HTML.Add('<div class="cabecalho">');
+        HTML.Add('  <h1>Gráfico dos Itens mais Vendidos de Pizza</h1>');
+        HTML.Add('  <p><strong>Hélio Marques</strong></p>');
+        HTML.Add('</div>');
+        HTML.Add('<div style="width: 75%; margin: auto;">');
+        HTML.Add('  <canvas id="graficoPizza"></canvas>');
+        HTML.Add('</div>');
+
+        // Script para gerar o gráfico
+        HTML.Add('<script>');
+        HTML.Add('const ctx = document.getElementById("graficoPizza").getContext("2d");');
+        HTML.Add('const graficoPizza = new Chart(ctx, {');
+        HTML.Add('  type: "pie",');
+        HTML.Add('  data: {');
+        HTML.Add('    labels: [' + Labels.DelimitedText + '],');
+        HTML.Add('    datasets: [{');
+        HTML.Add('      label: "Total Vendido",');
+        HTML.Add('      data: [' + Data.DelimitedText + '],');
+        HTML.Add('      backgroundColor: [' + Colors.DelimitedText + '],');
+        HTML.Add('      borderWidth: 1');
+        HTML.Add('    }]');
+        HTML.Add('  },');
+        HTML.Add('  options: {');
+        HTML.Add('    responsive: true,');
+        HTML.Add('    plugins: {');
+        HTML.Add('      legend: { position: "top" },');
+        HTML.Add('      title: {');
+        HTML.Add('        display: true,');
+        HTML.Add('        text: "Produtos Mais Vendidos"');
+        HTML.Add('      }');
+        HTML.Add('    }');
+        HTML.Add('  }');
+        HTML.Add('});');
+        HTML.Add('</script>');
+
+        // Fechar o HTML
+        HTML.Add('</body>');
+        HTML.Add('</html>');
+
+        Result := HTML.Text;
+      finally
+        HTML.Free;
+      end;
+    finally
+      Labels.Free;
+      Data.Free;
+      Colors.Free;
+    end;
+end;
+end.

@@ -1,0 +1,113 @@
+object FViewMaisVendido: TFViewMaisVendido
+  Left = 0
+  Top = 0
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'Itens mais Vendidos'
+  ClientHeight = 322
+  ClientWidth = 459
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  OnClose = FormClose
+  OnShow = FormShow
+  TextHeight = 15
+  object Label1: TLabel
+    Left = 248
+    Top = 80
+    Width = 87
+    Height = 15
+    Caption = 'CodigoProdutos'
+  end
+  object Label2: TLabel
+    Left = 248
+    Top = 128
+    Width = 99
+    Height = 15
+    Caption = 'DescricaoProdutos'
+  end
+  object Label3: TLabel
+    Left = 248
+    Top = 176
+    Width = 68
+    Height = 15
+    Caption = 'TotalVendido'
+  end
+  object DBGView: TDBGrid
+    Left = 0
+    Top = 0
+    Width = 459
+    Height = 322
+    Hint = 'Duplo Click para Alterar o Item do Pedido...'
+    Align = alClient
+    DataSource = DSItensPedido
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -12
+    TitleFont.Name = 'Segoe UI'
+    TitleFont.Style = []
+    Columns = <
+      item
+        Alignment = taCenter
+        Expanded = False
+        FieldName = 'CodigoProdutos'
+        Title.Alignment = taCenter
+        Title.Caption = 'Item'
+        Width = 47
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'DescricaoProdutos'
+        Title.Caption = 'Descri'#231#227'o do Item'
+        Width = 232
+        Visible = True
+      end
+      item
+        Color = 8454016
+        Expanded = False
+        FieldName = 'TotalVendido'
+        Title.Alignment = taRightJustify
+        Title.Caption = 'Quantidade Total Vendido'
+        Width = 143
+        Visible = True
+      end>
+  end
+  object DSItensPedido: TDataSource
+    DataSet = ItensMemTable
+    Left = 224
+    Top = 192
+  end
+  object ItensMemTable: TFDMemTable
+    FieldDefs = <>
+    CachedUpdates = True
+    IndexDefs = <>
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvPersistent, rvSilentMode]
+    ResourceOptions.Persistent = True
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired]
+    UpdateOptions.CheckRequired = False
+    StoreDefs = True
+    Left = 328
+    Top = 192
+    object ItensMemTableCodigoProdutos: TIntegerField
+      FieldName = 'CodigoProdutos'
+    end
+    object ItensMemTableDescricaoProduto: TStringField
+      FieldName = 'DescricaoProduto'
+      Size = 80
+    end
+    object ItensMemTableTotalVendido: TFloatField
+      FieldName = 'TotalVendido'
+    end
+  end
+end

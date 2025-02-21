@@ -1,0 +1,25 @@
+unit Utils.DMUtils;
+
+interface
+
+uses
+  System.SysUtils, System.Classes;
+
+type
+  TDMUtils = class(TDataModule)
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  DMUtils: TDMUtils;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+end.

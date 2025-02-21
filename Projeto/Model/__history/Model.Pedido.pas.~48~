@@ -1,0 +1,244 @@
+unit Model.Pedido;
+
+interface
+
+uses
+  Interfaces.IPedido, FireDAC.Comp.Client, Data.DB, Utils.DatabaseConnection;
+
+type
+  TPedido = class(TInterfacedObject, IPedido)
+  private
+    FNumeroPedido: Integer;
+    FDataEmissao: TDateTime;
+    FCliente: Integer;
+    FValorTotal: Double;
+    FQuery: TFDQuery; // Query para interagir com o banco de dados
+    FDatabaseConnection: TDatabaseConnection; // Conexão centralizada
+
+    function GetNumeroPedido: Integer;
+    function GetDataEmissao: TDateTime;
+    function GetCliente: Integer;
+    function GetValorTotal: Double;
+
+    procedure SetNumeroPedido(const Value: Integer);
+    procedure SetDataEmissao(const Value: TDateTime);
+    procedure SetCliente(const Value: Integer);
+    procedure SetValorTotal(const Value: Double);
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    property NumeroPedido: Integer read GetNumeroPedido write SetNumeroPedido;
+    property DataEmissao: TDateTime read GetDataEmissao write SetDataEmissao;
+    property Cliente: Integer read GetCliente write SetCliente;
+    property ValorTotal: Double read GetValorTotal write SetValorTotal;
+
+    function Salvar: Boolean; // Implementação do método Salvar
+    function Excluir(const AId: Integer): Boolean; // Implementação do método Excluir
+    procedure CarregarDados(const AFDMemTable: TFDMemTable;
+      pNumeroPedido, pNomeCliente, pLimite: String;
+      pDtIni, pDtFin : TDate); // Implementação do método CarregarDados
+  end;
+
+implementation
+
+uses
+  FireDAC.DApt, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
+  FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
+  FireDAC.Phys, FireDAC.VCLUI.Wait, FireDAC.Comp.UI, FireDAC.Phys.MySQL,
+  FireDAC.Phys.MySQLDef, System.SysUtils, Vcl.Dialogs,
+  Utils.ErrorLogger;
+
+{ TPedido }
+
+constructor TPedido.Create;
+begin
+  // Usa a conexão centralizada com parâmetros do arquivo .INI
+  FDatabaseConnection := TDatabaseConnection.Create;
+  FQuery := TFDQuery.Create(nil);
+  FQuery.Connection := FDatabaseConnection.Connection;
+end;
+
+destructor TPedido.Destroy;
+begin
+  FQuery.Free;
+  FDatabaseConnection.Free;
+  inherited;
+end;
+
+function TPedido.GetNumeroPedido: Integer;
+begin
+  Result := FNumeroPedido;
+end;
+
+function TPedido.GetDataEmissao: TDateTime;
+begin
+  Result := FDataEmissao;
+end;
+
+function TPedido.GetCliente: Integer;
+begin
+  Result := FCliente;
+end;
+
+function TPedido.GetValorTotal: Double;
+begin
+  Result := FValorTotal;
+end;
+
+procedure TPedido.SetNumeroPedido(const Value: Integer);
+begin
+  FNumeroPedido := Value;
+end;
+
+procedure TPedido.SetDataEmissao(const Value: TDateTime);
+begin
+  FDataEmissao := Value;
+end;
+
+procedure TPedido.SetCliente(const Value: Integer);
+begin
+  FCliente := Value;
+end;
+
+procedure TPedido.SetValorTotal(const Value: Double);
+begin
+  FValorTotal := Value;
+end;
+
+function TPedido.Salvar: Boolean;
+var
+  Logger: TErrorLogger;
+begin
+  Result := False;
+  Logger := TErrorLogger.Create; // Usa o caminho padrão 'error.log'
+  try
+
+    FDatabaseConnection.Connection.StartTransaction;
+    try
+      // Prepara a query para inserir ou atualizar o pedido
+      FQuery.SQL.Clear;
+      if FNumeroPedido = 0 then
+      begin
+        // Inserir novo pedido
+        FQuery.SQL.Add(' INSERT INTO Pedidos (DataEmissaoPedidos, '+
+                                            ' ClientePedidos,     '+
+                                            ' ValorTotalPedidos)  ');
+        FQuery.SQL.Add(' VALUES (:DataEmissao, '+
+                               ' :Cliente,     '+
+                               ' :ValorTotal)  ');
+      end
+      else
+      begin
+        // Atualizar pedido existente
+        FQuery.SQL.Add(' UPDATE Pedidos SET '+
+                              ' DataEmissaoPedidos = :DataEmissao, '+
+                              ' ClientePedidos = :Cliente,         '+
+                              ' ValorTotalPedidos = :ValorTotal    ');
+        FQuery.SQL.Add('  WHERE NumeroPedidos = :NumeroPedido      ');
+        FQuery.ParamByName('NumeroPedido').AsInteger := FNumeroPedido;
+      end;
+
+      // Define os parâmetros da query
+      FQuery.ParamByName('DataEmissao').AsDateTime := FDataEmissao;
+      FQuery.ParamByName('Cliente').AsInteger := FCliente;
+      FQuery.ParamByName('ValorTotal').AsFloat := FValorTotal;
+
+      // Executa a query
+      FQuery.ExecSQL;
+
+      // Se for uma inserção, recupera o ID gerado
+      if FNumeroPedido = 0 then
+      begin
+        FQuery.SQL.Clear;
+        FQuery.SQL.Add('SELECT LAST_INSERT_ID() AS LastID');
+        FQuery.Open;
+        FNumeroPedido := FQuery.FieldByName('LastID').AsInteger;
+      end;
+
+      FDatabaseConnection.Connection.Commit;
+      Result := True; // Indica que o pedido foi salvo com sucesso
+    except
+      on E: Exception do
+      begin
+        FDatabaseConnection.Connection.Rollback;
+        Logger.LogError(E);
+        raise Exception.Create('Erro ao salvar pedido: ' + E.Message);
+      end;
+    end;
+
+  finally
+    Logger.Free;
+  end;
+end;
+
+procedure TPedido.CarregarDados(const AFDMemTable: TFDMemTable;
+  pNumeroPedido, pNomeCliente, pLimite: String;
+  pDtIni, pDtFin : TDate);
+begin
+  try
+    // Prepara a query para selecionar os dados
+    FQuery.SQL.Clear;
+    FQuery.SQL.Add(' SELECT ');
+    FQuery.SQL.Add(' 	p.NumeroPedidos,     ');
+    FQuery.SQL.Add(' 	p.DataEmissaoPedidos,');
+    FQuery.SQL.Add('  p.ClientePedidos,    ');
+    FQuery.SQL.Add(' 	c.NomeClientes,      ');
+    FQuery.SQL.Add('  (SELECT SUM(ip.VlrTotalItensPedido)           '+
+                   '   FROM WKPedidos.ItensPedido ip                '+
+                   '   WHERE ip.PedidoItensPedido = p.NumeroPedidos '+
+                   '  ) AS ValorTotalPedidos ');
+    FQuery.SQL.Add('	FROM                   ');
+    FQuery.SQL.Add('		WKPedidos.Pedidos p  ');
+    FQuery.SQL.Add('	JOIN                   ');
+    FQuery.SQL.Add('		WKPedidos.Clientes c ON p.ClientePedidos = c.CodigoClientes');
+    FQuery.SQL.Add('	WHERE 1=1 ');
+    if Not pNumeroPedido.IsEmpty then
+      FQuery.SQL.Add('	AND p.NumeroPedidos = '+pNumeroPedido);
+    if Not pNomeCliente.IsEmpty then
+      FQuery.SQL.Add('	AND c.NomeClientes LIKE '+QuotedStr(pNomeCliente+'%'));
+    FQuery.SQL.Add('	ORDER BY');
+    FQuery.SQL.Add('		p.DataEmissaoPedidos DESC');
+    if Not pLimite.IsEmpty then
+      FQuery.SQL.Add('	LIMIT '+pLimite+' OFFSET 0 ');
+    FQuery.Open;
+
+    if FQuery.RecordCount > 0 then
+    begin
+      // Copia os dados para o TFDMemTable
+      AFDMemTable.Close;
+      AFDMemTable.Data := FQuery.Data;
+      AFDMemTable.Open;
+    end
+    else
+      AFDMemTable.Close;
+  except
+    on E: Exception do
+    begin
+      raise Exception.Create('Erro ao carregar dados: ' + E.Message);
+    end;
+  end;
+end;
+
+function TPedido.Excluir(const AId: Integer): Boolean;
+begin
+  Result := False;
+  try
+    // Prepara a query para excluir o pedido
+    FQuery.SQL.Clear;
+    FQuery.SQL.Add(' DELETE FROM Pedidos WHERE NumeroPedidos = :NumeroPedido');
+    FQuery.ParamByName('NumeroPedido').AsInteger := AId;
+
+    // Executa a query
+    FQuery.ExecSQL;
+
+    Result := True; // Indica que o pedido foi excluído com sucesso
+  except
+    on E: Exception do
+    begin
+      raise Exception.Create('Erro ao excluir pedido: ' + E.Message);
+    end;
+  end;
+end;
+
+end.

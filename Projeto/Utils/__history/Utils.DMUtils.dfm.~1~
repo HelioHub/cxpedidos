@@ -1,0 +1,4 @@
+object DMUtils: TDMUtils
+  Height = 178
+  Width = 427
+end

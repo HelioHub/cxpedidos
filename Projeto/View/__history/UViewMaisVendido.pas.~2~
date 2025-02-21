@@ -1,0 +1,24 @@
+unit UViewMaisVendido;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs;
+
+type
+  TFViewMaisVendido = class(TForm)
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FViewMaisVendido: TFViewMaisVendido;
+
+implementation
+
+{$R *.dfm}
+
+end.

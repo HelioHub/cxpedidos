@@ -1,0 +1,177 @@
+object FConsultaClientes: TFConsultaClientes
+  Left = 0
+  Top = 0
+  ActiveControl = LEFiltroNomeCliente
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'Consulta Clientes'
+  ClientHeight = 277
+  ClientWidth = 481
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OnClose = FormClose
+  OnShow = FormShow
+  TextHeight = 13
+  object PRodape: TPanel
+    Left = 0
+    Top = 236
+    Width = 481
+    Height = 41
+    Align = alBottom
+    TabOrder = 2
+    DesignSize = (
+      481
+      41)
+    object BBSair: TBitBtn
+      Left = 395
+      Top = 6
+      Width = 75
+      Height = 25
+      Anchors = [akRight]
+      Cancel = True
+      Caption = '&Fechar'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      NumGlyphs = 2
+      ParentFont = False
+      TabOrder = 1
+      OnClick = BBSairClick
+    end
+    object BBSelecionar: TBitBtn
+      Left = 303
+      Top = 6
+      Width = 86
+      Height = 25
+      Anchors = [akRight]
+      Caption = '&Selecionar'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      Kind = bkOK
+      NumGlyphs = 2
+      ParentFont = False
+      TabOrder = 0
+    end
+  end
+  object PDados: TPanel
+    Left = 0
+    Top = 41
+    Width = 481
+    Height = 195
+    Align = alClient
+    TabOrder = 1
+    object DBGView: TDBGrid
+      Left = 1
+      Top = 1
+      Width = 479
+      Height = 193
+      Hint = 'Duplo Click para Selecionar Cliente...'
+      Align = alClient
+      DataSource = DSConslutaCliente
+      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -11
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Style = []
+      Columns = <
+        item
+          Expanded = False
+          FieldName = 'CodigoClientes'
+          Title.Caption = 'C'#243'digo '
+          Width = 41
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'NomeClientes'
+          Title.Caption = 'Nome do Cliente'
+          Width = 219
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'CidadeClientes'
+          Title.Caption = 'Cidade'
+          Width = 149
+          Visible = True
+        end
+        item
+          Alignment = taCenter
+          Expanded = False
+          FieldName = 'UFClientes'
+          Title.Alignment = taCenter
+          Title.Caption = 'UF'
+          Width = 32
+          Visible = True
+        end>
+    end
+  end
+  object PHead: TPanel
+    Left = 0
+    Top = 0
+    Width = 481
+    Height = 41
+    Align = alTop
+    TabOrder = 0
+    DesignSize = (
+      481
+      41)
+    object LEFiltroNomeCliente: TLabeledEdit
+      Left = 142
+      Top = 10
+      Width = 246
+      Height = 21
+      EditLabel.Width = 132
+      EditLabel.Height = 21
+      EditLabel.Caption = 'Filtrar por Nome do Cliente:'
+      LabelPosition = lpLeft
+      TabOrder = 0
+      Text = ''
+    end
+    object BBFiltrar: TBitBtn
+      Left = 397
+      Top = 3
+      Width = 75
+      Height = 34
+      Anchors = [akTop, akRight]
+      Caption = 'Filtra&r'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 1
+      OnClick = BBFiltrarClick
+    end
+  end
+  object DSConslutaCliente: TDataSource
+    DataSet = FDMemTableCliente
+    Left = 168
+    Top = 121
+  end
+  object FDMemTableCliente: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 280
+    Top = 121
+  end
+end

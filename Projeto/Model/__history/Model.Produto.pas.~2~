@@ -1,0 +1,111 @@
+unit Model.Produto;
+
+interface
+
+uses
+  Interfaces.IProduto, FireDAC.Comp.Client, Data.DB, Utils.DatabaseConnection;
+
+type
+  TProduto = class(TInterfacedObject, IProduto)
+  private
+    FCodigoProdutos: Integer;
+    FDescricaoProdutos: string;
+    FPrecoVendaProdutos: Double;
+    FQuery: TFDQuery; // Query para interagir com o banco de dados
+    FDatabaseConnection: TDatabaseConnection; // Conexão centralizada
+
+    function GetCodigoProdutos: Integer;
+    function GetDescricaoProdutos: string;
+    function GetPrecoVendaProdutos: Double;
+
+    procedure SetCodigoProdutos(const Value: Integer);
+    procedure SetDescricaoProdutos(const Value: string);
+    procedure SetPrecoVendaProdutos(const Value: Double);
+  public
+    constructor Create(const IniFileName: string);
+    destructor Destroy; override;
+
+    property CodigoProdutos: Integer read GetCodigoProdutos write SetCodigoProdutos;
+    property DescricaoProdutos: string read GetDescricaoProdutos write SetDescricaoProdutos;
+    property PrecoVendaProdutos: Double read GetPrecoVendaProdutos write SetPrecoVendaProdutos;
+
+    procedure CarregarDados(const AFDMemTable: TFDMemTable); // Implementação do método CarregarDados
+  end;
+
+implementation
+
+uses
+  FireDAC.DApt, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
+  FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
+  FireDAC.Phys, FireDAC.VCLUI.Wait, FireDAC.Comp.UI, FireDAC.Phys.MySQL,
+  FireDAC.Phys.MySQLDef, System.SysUtils, Vcl.Dialogs;
+
+{ TProduto }
+
+constructor TProduto.Create(const IniFileName: string);
+begin
+  // Usa a conexão centralizada com parâmetros do arquivo .INI
+  FDatabaseConnection := TDatabaseConnection.Create(IniFileName);
+  FQuery := TFDQuery.Create(nil);
+  FQuery.Connection := FDatabaseConnection.Connection;
+end;
+
+destructor TProduto.Destroy;
+begin
+  FQuery.Free;
+  FDatabaseConnection.Free;
+  inherited;
+end;
+
+function TProduto.GetCodigoProdutos: Integer;
+begin
+  Result := FCodigoProdutos;
+end;
+
+function TProduto.GetDescricaoProdutos: string;
+begin
+  Result := FDescricaoProdutos;
+end;
+
+function TProduto.GetPrecoVendaProdutos: Double;
+begin
+  Result := FPrecoVendaProdutos;
+end;
+
+procedure TProduto.SetCodigoProdutos(const Value: Integer);
+begin
+  FCodigoProdutos := Value;
+end;
+
+procedure TProduto.SetDescricaoProdutos(const Value: string);
+begin
+  FDescricaoProdutos := Value;
+end;
+
+procedure TProduto.SetPrecoVendaProdutos(const Value: Double);
+begin
+  FPrecoVendaProdutos := Value;
+end;
+
+procedure TProduto.CarregarDados(const AFDMemTable: TFDMemTable);
+begin
+  try
+    // Prepara a query para selecionar os dados
+    FQuery.SQL.Clear;
+    FQuery.SQL.Add('SELECT CodigoProdutos, DescricaoProdutos, PrecoVendaProdutos');
+    FQuery.SQL.Add('FROM Produtos');
+    FQuery.Open;
+
+    // Copia os dados para o TFDMemTable
+    AFDMemTable.Close;
+    AFDMemTable.Data := FQuery.Data;
+    AFDMemTable.Open;
+  except
+    on E: Exception do
+    begin
+      ShowMessage('Erro ao carregar dados: ' + E.Message);
+    end;
+  end;
+end;
+
+end.

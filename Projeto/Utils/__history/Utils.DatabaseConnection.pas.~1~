@@ -1,0 +1,49 @@
+unit Utils.DatabaseConnection;
+
+interface
+
+uses
+  FireDAC.Comp.Client, FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef, System.SysUtils;
+
+type
+  TDatabaseConnection = class
+  private
+    FConnection: TFDConnection;
+
+    function GetConnection: TFDConnection;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    property Connection: TFDConnection read GetConnection;
+  end;
+
+implementation
+
+{ TDatabaseConnection }
+
+constructor TDatabaseConnection.Create;
+begin
+  FConnection := TFDConnection.Create(nil);
+  FConnection.DriverName := 'MySQL';
+  FConnection.Params.Database := 'WKPedidos';
+  FConnection.Params.UserName := 'root';
+  FConnection.Params.Password := 'senha';
+  FConnection.Params.Add('Server=localhost');
+  FConnection.Params.Add('Port=3306');
+  FConnection.Connected := True;
+end;
+
+destructor TDatabaseConnection.Destroy;
+begin
+  FConnection.Connected := False;
+  FConnection.Free;
+  inherited;
+end;
+
+function TDatabaseConnection.GetConnection: TFDConnection;
+begin
+  Result := FConnection;
+end;
+
+end.

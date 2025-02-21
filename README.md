@@ -7,34 +7,34 @@ Cadastro de Pedidos e Clientes
 ![## Atenção CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/Atencao3.png)
 ![## Atenção CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/Atencao.png)
 
-## Requisitos Atendidos
+## Requisitos Atendidos e feitos + outros recursos.
 
 1-Criar um projeto VCL com um CRUD de clientes 
 
-![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA1.png)
+![## CX1](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA1.png)
 
 2-Realizar a integração da seguinte API para consulta de CEP: 
 3-Realizar a integração da seguinte API para consulta de CNPJ:
 4-Realizar a integração da seguinte API para trazer o código do IBGE e informar no cadastro do cliente: 
 8-Realizar a alteração na rotina de consulta CEP para trazer a latitude e longitude: 
 
-![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA2.png)
+![## CX2](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA2.png)
 
 5-Salvar os dados e exibir em uma grid e também ter a opção de editar ou excluir o registro da grid
 
-![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA5.png)
+![## CX5](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA5.png)
 
 6-Realizar a impressão de todos os registros
 
-![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA6.png)
+![## CX6](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA6.png)
 
 7-Realizar a impressão de registros selecionados
 
-![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA6.png)
+![## CX7](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA6.png)
 
 9-As informações podem ser salvar em um banco ou em memoria(Memtable) - (caso for usar banco de teste nos passe o banco para poder testar a aplicação)
 
-![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA9.png)
+![## CX8](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA9.png)
 
 10-Enviar o fonte por email ou o link do github com o projeto publico
 	Enviado!! 
@@ -472,6 +472,15 @@ Cadastro de Pedidos e Clientes
 
    Estão no Projeto na pasta .\DUMP
 
+## Feito gráficos na Aplicação em HTML/CSS/JS
+
+    De Barra
+![## Gráficos CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/Grafico1.png)
+![## Gráficos CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/Grafico2.png)
+
+	De Pizza
+![## Gráficos CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/GraficoPizza1.png)
+![## Gráficos CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/GraficoPizza2.png)
 
 
 

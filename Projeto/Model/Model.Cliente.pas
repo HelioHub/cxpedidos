@@ -180,12 +180,16 @@ begin
   cWhere := '';
   for I := 0 to High(CodigosClientes) do
   begin
-    cWhere := cWhere + ' OR CodigoClientes = '+ IntToStr(CodigosClientes[I]);
+    if I = 0 then cWhere := ' ( '
+    else          cWhere := cWhere + ' OR ';
+    cWhere := cWhere + ' CodigoClientes = '+ IntToStr(CodigosClientes[I]);
+    if I = High(CodigosClientes) then cWhere := cWhere + ' ) ';
   end;
 
   FQuery.SQL.Clear;
-  FQuery.SQL.Text := 'SELECT * FROM Clientes WHERE 1=1 ';
-  FQuery.SQL.Add(cWhere);
+  FQuery.SQL.Text := 'SELECT * FROM Clientes ';
+  if cWhere <> EmptyStr then
+    FQuery.SQL.Add('WHERE 1=1 AND ' + cWhere);
   FQuery.SQL.Add(' ORDER BY CodigoClientes ');
   FQuery.Open;
 

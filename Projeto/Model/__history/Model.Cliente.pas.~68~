@@ -86,12 +86,12 @@ type
     property NomeFantasiaClientes: string read GetNomeFantasiaClientes write SetNomeFantasiaClientes;
     property SitCadastralClientes: string read GetSitCadastralClientes write SetSitCadastralClientes;
 
-    procedure CarregarDados(const AFDMemTable: TFDMemTable; pId, pNomeCliente, pLimite: String); // Implementação do método CarregarDados
+    procedure CarregarDados(const AFDMemTable: TFDMemTable; pId, pNomeCliente, pLimite: String);
     function CarregarNomePorId(pId: String) : String; // Implementação do método Carregar Nome por Id
     function Excluir(const AId: Integer): Boolean;
     function Salvar: Boolean;
 
-    function GerarRelatorioHTML(const CodigosClientes: String): string;
+    function GerarRelatorioHTML(const CodigosClientes: TArray<Integer>): string;
   end;
 
 implementation
@@ -171,13 +171,22 @@ begin
 end;
 
 function TCliente.GerarRelatorioHTML(
-  const CodigosClientes: String): string;
+  const CodigosClientes: TArray<Integer>): string;
 var
   HTML: TStringList;
+  cWhere: String;
+  I: Integer;
 begin
+  cWhere := '';
+  for I := 0 to High(CodigosClientes) do
+  begin
+    cWhere := cWhere + ' AND CodigoClientes = '+ IntToStr(CodigosClientes[I]);
+  end;
+
   FQuery.SQL.Clear;
-  FQuery.SQL.Text := 'SELECT * FROM Clientes WHERE CodigoClientes IN (:Codigos)';
-  FQuery.ParamByName('Codigos').AsString := CodigosClientes; // Passa a lista de códigos
+  FQuery.SQL.Text := 'SELECT * FROM Clientes WHERE 1=1 ';
+  FQuery.SQL.Add(cWhere);
+  FQuery.SQL.Add(' ORDER BY CodigoClientes ');
   FQuery.Open;
 
   // Cria o HTML
@@ -366,7 +375,8 @@ begin
     if pNomeCliente <> EmptyStr then
       FQuery.SQL.Add(' AND clientes.NomeClientes LIKE '+QuotedStr(pNomeCliente+'%'));
     FQuery.SQL.Add(' ORDER BY clientes.NomeClientes');
-    FQuery.SQL.Add('	LIMIT '+pLimite+' OFFSET 0 ');
+    if pLimite <> EmptyStr then
+      FQuery.SQL.Add('	LIMIT '+pLimite+' OFFSET 0 ');
     FQuery.Open;
 
     // Copia os dados para o TFDMemTable

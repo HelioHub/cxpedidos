@@ -91,7 +91,7 @@ type
     function Excluir(const AId: Integer): Boolean;
     function Salvar: Boolean;
 
-    function GerarRelatorioHTML(const CodigosClientes: String): string;
+    function GerarRelatorioHTML(const CodigosClientes: TArray<Integer>): string;
   end;
 
 implementation
@@ -171,14 +171,22 @@ begin
 end;
 
 function TCliente.GerarRelatorioHTML(
-  const CodigosClientes: String): string;
+  const CodigosClientes: TArray<Integer>): string;
 var
   HTML: TStringList;
+  cWhere: String;
+  I: Integer;
 begin
+  cWhere := '';
+  for I := 0 to High(CodigosClientes) do
+  begin
+    cWhere := cWhere + ' OR CodigoClientes = '+ IntToStr(CodigosClientes[I]);
+  end;
+
   FQuery.SQL.Clear;
-  FQuery.SQL.Text := 'SELECT * FROM Clientes WHERE CodigoClientes '; //IN (:Codigos)';
-  //FQuery.ParamByName('Codigos').AsString := CodigosClientes; // Passa a lista de códigos
-  FQuery.SQL.Add(' ORDER BY CodigoClientes');
+  FQuery.SQL.Text := 'SELECT * FROM Clientes WHERE 1=2 ';
+  FQuery.SQL.Add(cWhere);
+  FQuery.SQL.Add(' ORDER BY CodigoClientes ');
   FQuery.Open;
 
   // Cria o HTML

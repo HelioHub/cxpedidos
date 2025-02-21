@@ -91,7 +91,7 @@ type
     function Excluir(const AId: Integer): Boolean;
     function Salvar: Boolean;
 
-    function GerarRelatorioHTML(const CodigosClientes: String): string;
+    function GerarRelatorioHTML(const CodigosClientes: TArray<Integer>): string;
   end;
 
 implementation
@@ -171,13 +171,26 @@ begin
 end;
 
 function TCliente.GerarRelatorioHTML(
-  const CodigosClientes: String): string;
+  const CodigosClientes: TArray<Integer>): string;
 var
   HTML: TStringList;
+  cWhere: String;
+  I: Integer;
 begin
+  cWhere := '';
+  for I := 0 to High(CodigosClientes) do
+  begin
+    if I = 0 then cWhere := ' ( '
+    else          cWhere := ' OR ';
+    cWhere := cWhere + ' CodigoClientes = '+ IntToStr(CodigosClientes[I]);
+    if I = High(CodigosClientes) then cWhere := ' ) '
+  end;
+
   FQuery.SQL.Clear;
-  FQuery.SQL.Text := 'SELECT * FROM Clientes WHERE CodigoClientes IN (:Codigos)';
-  FQuery.ParamByName('Codigos').AsString := CodigosClientes; // Passa a lista de códigos
+  FQuery.SQL.Text := 'SELECT * FROM Clientes ';
+  if cWhere <> EmptyStr then
+    FQuery.SQL.Add('WHERE 1=1 AND ' + cWhere);
+  FQuery.SQL.Add(' ORDER BY CodigoClientes ');
   FQuery.Open;
 
   // Cria o HTML
@@ -366,7 +379,8 @@ begin
     if pNomeCliente <> EmptyStr then
       FQuery.SQL.Add(' AND clientes.NomeClientes LIKE '+QuotedStr(pNomeCliente+'%'));
     FQuery.SQL.Add(' ORDER BY clientes.NomeClientes');
-    FQuery.SQL.Add('	LIMIT '+pLimite+' OFFSET 0 ');
+    if pLimite <> EmptyStr then
+      FQuery.SQL.Add('	LIMIT '+pLimite+' OFFSET 0 ');
     FQuery.Open;
 
     // Copia os dados para o TFDMemTable

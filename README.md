@@ -10,30 +10,30 @@ Cadastro de Pedidos e Clientes
 ## Requisitos Atendidos
 
 1-Criar um projeto VCL com um CRUD de clientes 
+
 ![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA1.png)
 
-2-Realizar a integração da seguinte API para consulta de CEP: https://brasilapi.com.br/docs#tag/CEP
-![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA2.png)
+2-Realizar a integração da seguinte API para consulta de CEP: 
+3-Realizar a integração da seguinte API para consulta de CNPJ:
+4-Realizar a integração da seguinte API para trazer o código do IBGE e informar no cadastro do cliente: 
+8-Realizar a alteração na rotina de consulta CEP para trazer a latitude e longitude: 
 
-3-Realizar a integração da seguinte API para consulta de CNPJ: https://brasilapi.com.br/docs#tag/CNPJ
-![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA2.png)
-
-4-Realizar a integração da seguinte API para trazer o código do IBGE e informar no cadastro do cliente: https://brasilapi.com.br/docs#tag/IBGE
 ![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA2.png)
 
 5-Salvar os dados e exibir em uma grid e também ter a opção de editar ou excluir o registro da grid
+
 ![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA5.png)
 
 6-Realizar a impressão de todos os registros
+
 ![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA6.png)
 
 7-Realizar a impressão de registros selecionados
+
 ![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA6.png)
 
-8-Realizar a alteração na rotina de consulta CEP para trazer a latitude e longitude: https://brasilapi.com.br/docs#tag/CEP-V2 
-![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA2.png)
-
 9-As informações podem ser salvar em um banco ou em memoria(Memtable) - (caso for usar banco de teste nos passe o banco para poder testar a aplicação)
+
 ![## CX](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA9.png)
 
 10-Enviar o fonte por email ou o link do github com o projeto publico

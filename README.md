@@ -22,16 +22,16 @@ Cadastro de Pedidos e Clientes
 
 5-Salvar os dados e exibir em uma grid e também ter a opção de editar ou excluir o registro da grid
 
-![## CX5](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/Ra5.png)
+![## CX5](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/Ra51.png)
 
 6-Realizar a impressão de todos os registros
 7-Realizar a impressão de registros selecionados
 
-![## CX6](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/Ra6.png)
+![## CX6](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/Ra61.png)
 
 9-As informações podem ser salvar em um banco ou em memoria(Memtable) - (caso for usar banco de teste nos passe o banco para poder testar a aplicação)
 
-![## CX8](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/Ra9.png)
+![## CX8](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/Ra91.png)
 
 10-Enviar o fonte por email ou o link do github com o projeto publico
 	Enviado!! 

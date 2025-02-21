@@ -11,30 +11,27 @@ Cadastro de Pedidos e Clientes
 
 1-Criar um projeto VCL com um CRUD de clientes 
 
-![## CX1](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA1.png)
+![## CX1](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/Ra1.png)
 
 2-Realizar a integração da seguinte API para consulta de CEP: 
 3-Realizar a integração da seguinte API para consulta de CNPJ:
 4-Realizar a integração da seguinte API para trazer o código do IBGE e informar no cadastro do cliente: 
 8-Realizar a alteração na rotina de consulta CEP para trazer a latitude e longitude: 
 
-![## CX2](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA2.png)
+![## CX2](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/Ra2.png)
 
 5-Salvar os dados e exibir em uma grid e também ter a opção de editar ou excluir o registro da grid
 
-![## CX5](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA5.png)
+![## CX5](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/Ra5.png)
 
 6-Realizar a impressão de todos os registros
-
-![## CX6](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA6.png)
-
 7-Realizar a impressão de registros selecionados
 
-![## CX7](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA6.png)
+![## CX6](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/Ra6.png)
 
 9-As informações podem ser salvar em um banco ou em memoria(Memtable) - (caso for usar banco de teste nos passe o banco para poder testar a aplicação)
 
-![## CX8](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/RA9.png)
+![## CX8](https://github.com/HelioHub/cxpedidos/blob/main/Imagens/Ra9.png)
 
 10-Enviar o fonte por email ou o link do github com o projeto publico
 	Enviado!! 

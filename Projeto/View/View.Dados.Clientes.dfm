@@ -78,7 +78,10 @@ object FDadosClientes: TFDadosClientes
       Top = 36
       Width = 107
       Height = 22
+      Hint = 'Acesso a API Brasil...'
       Caption = 'F2 -Concultar CNPJ'
+      ParentShowHint = False
+      ShowHint = True
       StyleName = 'Windows'
       OnClick = SBF2Click
     end
@@ -111,29 +114,29 @@ object FDadosClientes: TFDadosClientes
       Caption = 'Bairro:'
     end
     object LLong: TLabel
-      Left = 429
-      Top = 178
+      Left = 325
+      Top = 205
       Width = 51
       Height = 13
       Caption = 'Longitude:'
     end
     object LLati: TLabel
-      Left = 437
-      Top = 206
+      Left = 333
+      Top = 233
       Width = 43
       Height = 13
       Caption = 'Latitude:'
     end
     object LCIBGE: TLabel
-      Left = 402
-      Top = 233
+      Left = 298
+      Top = 260
       Width = 78
       Height = 13
       Caption = 'Codigo do IBGE:'
     end
     object LSituacao: TLabel
       Left = 384
-      Top = 260
+      Top = 96
       Width = 96
       Height = 13
       Caption = 'Situa'#231#227'o do Cliente:'
@@ -152,14 +155,17 @@ object FDadosClientes: TFDadosClientes
       Height = 13
       Caption = 'CEP:'
     end
-    object SpeedButton1: TSpeedButton
+    object SBF3: TSpeedButton
       Left = 207
       Top = 118
       Width = 145
       Height = 22
+      Hint = 'Acesso ao API Brasil...'
       Caption = 'F3 -Concultar CEP'
+      ParentShowHint = False
+      ShowHint = True
       StyleName = 'Windows'
-      OnClick = SpeedButton1Click
+      OnClick = SBF3Click
     end
     object LCidade: TLabel
       Left = 68
@@ -174,6 +180,37 @@ object FDadosClientes: TFDadosClientes
       Width = 17
       Height = 13
       Caption = 'UF:'
+    end
+    object LJSON: TLabel
+      Left = 437
+      Top = 14
+      Width = 53
+      Height = 13
+      Caption = '-- JSONs --'
+    end
+    object SBF4: TSpeedButton
+      Left = 480
+      Top = 200
+      Width = 99
+      Height = 51
+      Hint = 'Acesso ao API Brasil...'
+      Caption = 'F4 -Concultar API'
+      ParentShowHint = False
+      ShowHint = True
+      StyleName = 'Windows'
+      OnClick = SBF4Click
+    end
+    object SBF5: TSpeedButton
+      Left = 480
+      Top = 256
+      Width = 99
+      Height = 21
+      Hint = 'Acesso ao API Brasil...'
+      Caption = 'F5 -Concultar IBGE'
+      ParentShowHint = False
+      ShowHint = True
+      StyleName = 'Windows'
+      OnClick = SBF5Click
     end
     object LECodigoCliente: TLabeledEdit
       Left = 108
@@ -258,7 +295,7 @@ object FDadosClientes: TFDadosClientes
     end
     object ESituacao: TEdit
       Left = 486
-      Top = 256
+      Top = 92
       Width = 93
       Height = 21
       TabStop = False
@@ -273,8 +310,8 @@ object FDadosClientes: TFDadosClientes
       TabOrder = 10
     end
     object ELongitude: TEdit
-      Left = 486
-      Top = 174
+      Left = 382
+      Top = 201
       Width = 93
       Height = 21
       TabStop = False
@@ -282,8 +319,8 @@ object FDadosClientes: TFDadosClientes
       TabOrder = 11
     end
     object ELatidude: TEdit
-      Left = 486
-      Top = 202
+      Left = 382
+      Top = 229
       Width = 93
       Height = 21
       TabStop = False
@@ -291,8 +328,8 @@ object FDadosClientes: TFDadosClientes
       TabOrder = 12
     end
     object EIBGE: TEdit
-      Left = 486
-      Top = 229
+      Left = 382
+      Top = 256
       Width = 93
       Height = 21
       TabStop = False
@@ -322,6 +359,7 @@ object FDadosClientes: TFDadosClientes
       Top = 37
       Width = 225
       Height = 48
+      TabStop = False
       Color = 14408667
       ScrollBars = ssVertical
       TabOrder = 14
@@ -331,6 +369,7 @@ object FDadosClientes: TFDadosClientes
       Top = 119
       Width = 224
       Height = 49
+      TabStop = False
       Color = 14408667
       ScrollBars = ssVertical
       TabOrder = 15

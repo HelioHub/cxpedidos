@@ -23,7 +23,6 @@ object FDadosClientes: TFDadosClientes
     Height = 41
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 283
     DesignSize = (
       599
       41)
@@ -74,9 +73,6 @@ object FDadosClientes: TFDadosClientes
     Height = 286
     Align = alClient
     TabOrder = 0
-    ExplicitLeft = 8
-    ExplicitTop = 8
-    ExplicitHeight = 293
     object SBF2: TSpeedButton
       Left = 245
       Top = 36
@@ -116,14 +112,14 @@ object FDadosClientes: TFDadosClientes
     end
     object LLong: TLabel
       Left = 429
-      Top = 123
+      Top = 178
       Width = 51
       Height = 13
       Caption = 'Longitude:'
     end
     object LLati: TLabel
       Left = 437
-      Top = 151
+      Top = 206
       Width = 43
       Height = 13
       Caption = 'Latitude:'
@@ -137,7 +133,7 @@ object FDadosClientes: TFDadosClientes
     end
     object LSituacao: TLabel
       Left = 384
-      Top = 68
+      Top = 260
       Width = 96
       Height = 13
       Caption = 'Situa'#231#227'o do Cliente:'
@@ -159,11 +155,11 @@ object FDadosClientes: TFDadosClientes
     object SpeedButton1: TSpeedButton
       Left = 207
       Top = 118
-      Width = 107
+      Width = 145
       Height = 22
       Caption = 'F3 -Concultar CEP'
       StyleName = 'Windows'
-      OnClick = SBF2Click
+      OnClick = SpeedButton1Click
     end
     object LCidade: TLabel
       Left = 68
@@ -212,6 +208,7 @@ object FDadosClientes: TFDadosClientes
       Top = 64
       Width = 244
       Height = 21
+      TabStop = False
       ReadOnly = True
       TabOrder = 2
     end
@@ -220,6 +217,7 @@ object FDadosClientes: TFDadosClientes
       Top = 92
       Width = 244
       Height = 21
+      TabStop = False
       ReadOnly = True
       TabOrder = 3
     end
@@ -237,6 +235,7 @@ object FDadosClientes: TFDadosClientes
       Top = 147
       Width = 244
       Height = 21
+      TabStop = False
       ReadOnly = True
       TabOrder = 5
     end
@@ -245,9 +244,7 @@ object FDadosClientes: TFDadosClientes
       Top = 174
       Width = 64
       Height = 21
-      Enabled = False
       NumbersOnly = True
-      ReadOnly = True
       TabOrder = 6
     end
     object EBairro: TEdit
@@ -255,14 +252,16 @@ object FDadosClientes: TFDadosClientes
       Top = 202
       Width = 181
       Height = 21
+      TabStop = False
       ReadOnly = True
       TabOrder = 7
     end
     object ESituacao: TEdit
       Left = 486
-      Top = 64
+      Top = 256
       Width = 93
       Height = 21
+      TabStop = False
       Color = clRed
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
@@ -271,47 +270,70 @@ object FDadosClientes: TFDadosClientes
       Font.Style = []
       ParentFont = False
       ReadOnly = True
-      TabOrder = 8
+      TabOrder = 10
     end
     object ELongitude: TEdit
       Left = 486
-      Top = 119
+      Top = 174
       Width = 93
       Height = 21
+      TabStop = False
       ReadOnly = True
-      TabOrder = 9
+      TabOrder = 11
     end
     object ELatidude: TEdit
       Left = 486
-      Top = 147
+      Top = 202
       Width = 93
       Height = 21
+      TabStop = False
       ReadOnly = True
-      TabOrder = 10
+      TabOrder = 12
     end
     object EIBGE: TEdit
       Left = 486
       Top = 229
       Width = 93
       Height = 21
+      TabStop = False
       ReadOnly = True
-      TabOrder = 11
+      TabOrder = 13
     end
     object ECidade: TEdit
       Left = 108
       Top = 229
       Width = 181
       Height = 21
+      TabStop = False
       ReadOnly = True
-      TabOrder = 12
+      TabOrder = 8
     end
     object EUF: TEdit
       Left = 108
       Top = 256
       Width = 29
       Height = 21
+      TabStop = False
       ReadOnly = True
-      TabOrder = 13
+      TabOrder = 9
+    end
+    object MJSonCNPJ: TMemo
+      Left = 354
+      Top = 37
+      Width = 225
+      Height = 48
+      Color = 14408667
+      ScrollBars = ssVertical
+      TabOrder = 14
+    end
+    object MJSonCEP: TMemo
+      Left = 355
+      Top = 119
+      Width = 224
+      Height = 49
+      Color = 14408667
+      ScrollBars = ssVertical
+      TabOrder = 15
     end
   end
 end

@@ -35,7 +35,7 @@ uses
   Utils.DMUtils in 'Utils\Utils.DMUtils.pas' {DMUtils: TDataModule},
   View.Clientes in 'View\View.Clientes.pas' {FViewClientes},
   View.Dados.Clientes in 'View\View.Dados.Clientes.pas' {FDadosClientes},
-  Utils.BrasilAPI in 'Utils\Utils.BrasilAPI.pas';
+  Utils.uBrasilAPI in 'Utils\Utils.uBrasilAPI.pas';
 
 {$R *.res}
 
